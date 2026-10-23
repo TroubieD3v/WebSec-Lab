@@ -35,7 +35,7 @@ stay inside the labs**. Everything else is derived from that.
 | CSRF lab depends on browser cookie behaviour | The victim's browser is simulated server-side with real cookie, `Origin` and `Sec-Fetch-Site` headers; the session cookie never leaves the lab | `tests/security/test_csrf.py` |
 | Uploaded active content runs on a trusted origin | Files live in memory, are served only from the isolated lab origin and previewed in a sandboxed iframe without `allow-same-origin`; nginx exposes only `uploads/<safe-name>` | `tests/security/test_file_upload.py` (nothing is written to disk), e2e |
 | JWT lab leaks real secrets or keys | Only fake credentials; the fixed mode uses a random per-process secret; tokens are signed in the browser and the secret field is local | `tests/security/test_jwt.py` |
-| Race lab used as a CPU or thread sink | Simulated latency is 50 ms, wallets are tiny in-memory counters, requests are bounded by the proxy limits | `tests/security/test_race_condition.py` |
+| Race lab used as a CPU or thread sink | Simulated latency is 200 ms, wallets are tiny in-memory counters, requests are bounded by the proxy limits | `tests/security/test_race_condition.py` |
 | Control plane abused for DoS | Request/response size caps, 5 s upstream timeout | `backend/app/routes/proxy.py` |
 
 ## Known limitations

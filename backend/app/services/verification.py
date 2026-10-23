@@ -493,6 +493,7 @@ async def verify_file_upload(p: Probe) -> None:
 # --- Race condition ------------------------------------------------------------------
 COUPON = {"code": "WELCOME10"}
 BURST = 10
+BURST_ATTEMPTS = 3  # a burst on a starved machine can arrive too spread out to race; never more than 3 tries
 
 
 async def verify_race_condition(p: Probe) -> None:
@@ -507,13 +508,18 @@ async def verify_race_condition(p: Probe) -> None:
             f"first={first.status_code}, second={second.status_code}, balance={wallet.get('balance')}",
         )
 
-        await p.reset()
-        responses = await asyncio.gather(*(p.req(mode, "POST", "/redeem", json=COUPON) for _ in range(BURST)))
-        wallet = _json(await p.req(mode, "GET", "/wallet"))
+        # Vulnerable: one burst that races is enough. Fixed: every burst must leave exactly one redemption.
+        attempts, raced = 0, False
+        while attempts < BURST_ATTEMPTS and not raced:
+            attempts += 1
+            await p.reset()
+            responses = await asyncio.gather(*(p.req(mode, "POST", "/redeem", json=COUPON) for _ in range(BURST)))
+            wallet = _json(await p.req(mode, "GET", "/wallet"))
+            raced = wallet.get("balance", 0) > 10
         accepted = sum(r.status_code == 200 for r in responses)
         p.attack(
             "parallel-redeem", T(f"{BURST} simultaneous requests redeem the single-use coupon more than once", f"{BURST} одновременных запросов применяют одноразовый купон более одного раза"),
-            mode, wallet.get("balance", 0) > 10, f"{accepted} of {BURST} accepted, balance={wallet.get('balance')}",
+            mode, raced, f"{accepted} of {BURST} accepted, balance={wallet.get('balance')}, burst {attempts} of {BURST_ATTEMPTS}",
         )
     await p.reset()
 

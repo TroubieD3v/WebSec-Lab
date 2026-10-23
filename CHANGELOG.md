@@ -2,6 +2,20 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- Race Condition: the parallel attack could fail on a slow or CPU-starved machine because the race window was only
+  50 ms (1 burst in 10 did not race with a tenth of a CPU). The window is now 200 ms, and the verifier retries the
+  burst up to three times (in fixed mode every one of those bursts must still redeem exactly once).
+- `tests/check_links.py` printed nothing until every link had timed out, which looked like a hang when a host is
+  blocked; results now stream, the timeout is 10 s and further links to an unreachable host are skipped.
+
+### Changed
+- Frontend build image on Node 24 LTS and nginx-unprivileged 1.31; Dependabot ignores odd (non-LTS) Node majors.
+- CI runs once per pull request instead of twice; GitHub Actions updated to current majors.
+- The release workflow refreshes an existing release when a tag is pushed again.
+
 ## [1.2.1]
 
 ### Fixed

@@ -23,7 +23,9 @@ router = APIRouter(prefix=f"/{LAB_ID}", tags=[LAB_ID])
 
 COUPON_CODE = "WELCOME10"
 COUPON_VALUE = 10
-DB_LATENCY = 0.05  # simulated database round trip: the race window
+# Simulated database round trip: the race window. Wide enough that a burst from a slow or CPU-starved
+# machine still overlaps (at 50 ms, 1 burst in 10 failed to race with a tenth of a CPU).
+DB_LATENCY = 0.2
 BURST_WINDOW = 1.0  # seconds
 BURST_REJECTIONS = 3  # refusals inside the window that count as a parallel attack (not a double click)
 
