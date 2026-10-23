@@ -185,7 +185,8 @@ export function ErrorBox({ message, onRetry }: { message: string; onRetry?: () =
 
 export function CodeBlock({ className, ...props }: HTMLAttributes<HTMLPreElement>) {
   return (
-    <pre
+    // biome-ignore lint/a11y/noNoninteractiveTabindex: long code scrolls; keyboard users need to focus it to scroll
+    <pre tabIndex={0}
       className={cn('overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3 font-mono text-xs leading-relaxed text-zinc-200', className)}
       {...props}
     />

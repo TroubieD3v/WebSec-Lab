@@ -37,9 +37,9 @@ export function Layout() {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-20 border-b border-zinc-900 bg-zinc-950/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6">
-          <NavLink to="/" className="flex shrink-0 items-center gap-2.5" aria-label={t('app.name')}>
+          <NavLink to="/" className="flex shrink-0 items-center gap-2.5">
             <ShieldCheck className="size-6 text-emerald-400" aria-hidden />
-            <span className="hidden leading-tight sm:block">
+            <span className="sr-only leading-tight sm:not-sr-only sm:block">
               <span className="block text-sm font-semibold tracking-tight">{t('app.name')}</span>
               <span className="block text-[11px] text-zinc-500">{t('app.tagline')}</span>
             </span>

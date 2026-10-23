@@ -63,17 +63,18 @@ export function ProgressPage() {
           {data.achievements.map((a) => (
             <li
               key={a.id}
-              className={cn('flex gap-3 transition-opacity', !a.unlocked && 'opacity-45')}
+              className="flex gap-3"
               data-testid={`achievement-${a.id}`}
               data-unlocked={a.unlocked}
             >
               {a.unlocked ? (
                 <Award className="mt-0.5 size-5 shrink-0 text-emerald-300" aria-hidden />
               ) : (
-                <Lock className="mt-0.5 size-5 shrink-0 text-zinc-600" aria-hidden />
+                <Lock className="mt-0.5 size-5 shrink-0 text-zinc-500" aria-hidden />
               )}
               <div>
-                <p className="font-medium">{a.title}</p>
+                {/* Locked items are muted with colour, not opacity, so their text keeps AA contrast. */}
+                <p className={cn('font-medium', a.unlocked ? 'text-zinc-100' : 'text-zinc-400')}>{a.title}</p>
                 <p className="text-sm text-zinc-500">{a.description}</p>
               </div>
             </li>
@@ -92,7 +93,7 @@ export function ProgressPage() {
                 <span className={cn('size-2 shrink-0 rounded-full', dot[event.kind] ?? 'bg-zinc-600')} aria-hidden />
                 <span className="text-zinc-200">{t(`event.${event.kind}` as Key)}</span>
                 <span className="text-zinc-500">{event.lab_title}</span>
-                <time className="ml-auto text-xs text-zinc-600 tabular-nums" dateTime={event.at}>
+                <time className="ml-auto text-xs text-zinc-500 tabular-nums" dateTime={event.at}>
                   {new Date(event.at).toLocaleString(lang)}
                 </time>
               </li>

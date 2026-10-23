@@ -17,9 +17,9 @@
   --color-zinc-100: #e6e4df;
   --color-zinc-200: #d0cfcc;
   --color-zinc-300: #b3b5b9;
-  --color-zinc-400: #8d929b;
-  --color-zinc-500: #6c717b;
-  --color-zinc-600: #4a505a;
+  --color-zinc-400: #a2a6ae;
+  --color-zinc-500: #8e939c; /* darkest grey allowed for text: >= 4.5:1 on page, cards and controls */
+  --color-zinc-600: #4a505a; /* borders and decoration only, never text */
   --color-zinc-700: #333842;
   --color-zinc-800: #252930;
   --color-zinc-900: #1a1d22;

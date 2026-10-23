@@ -86,7 +86,7 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
             <span
               className={cn(
                 'text-sm leading-snug transition-colors duration-500 sm:pr-4',
-                step.done ? 'text-zinc-200' : step.id === next ? 'text-zinc-300' : 'text-zinc-600',
+                step.done ? 'text-zinc-200' : step.id === next ? 'text-zinc-300' : 'text-zinc-500',
               )}
             >
               {step.label}

@@ -21,7 +21,7 @@ const formatHeaders = (headers: Record<string, string>) =>
     .join('\n')
 
 const field =
-  'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 placeholder:text-zinc-600'
+  'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 placeholder:text-zinc-500'
 
 interface Props {
   labId: string

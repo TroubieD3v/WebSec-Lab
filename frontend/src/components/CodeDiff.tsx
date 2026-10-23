@@ -12,9 +12,9 @@ function Cell({ line }: { line: CodeRow['left'] | CodeRow['right'] }) {
   if (!line) return <td colSpan={2} className="bg-zinc-900/40" />
   return (
     <>
-      <td className={cn('w-10 select-none px-2 text-right text-zinc-600', cellTone[line.kind])}>{line.n}</td>
+      <td className={cn('w-10 select-none px-2 text-right text-zinc-500', cellTone[line.kind])}>{line.n}</td>
       <td className={cn('px-2 whitespace-pre-wrap [overflow-wrap:anywhere]', cellTone[line.kind], line.kind === 'del' && 'text-rose-200', line.kind === 'add' && 'text-emerald-200')}>
-        <span className="mr-2 select-none text-zinc-600">{marker[line.kind]}</span>
+        <span className="mr-2 select-none text-zinc-500">{marker[line.kind]}</span>
         {line.text || ' '}
       </td>
     </>
@@ -23,7 +23,8 @@ function Cell({ line }: { line: CodeRow['left'] | CodeRow['right'] }) {
 
 function SideBySide({ rows }: { rows: CodeRow[] }) {
   return (
-    <div className="overflow-x-auto">
+    // biome-ignore lint/a11y/noNoninteractiveTabindex: the diff can scroll; keyboard users need to focus it
+    <div className="overflow-x-auto" tabIndex={0}>
       <table className="w-full table-fixed border-collapse font-mono text-xs leading-6" data-testid="code-diff">
         <colgroup>
           <col className="w-10" />
@@ -46,7 +47,8 @@ function SideBySide({ rows }: { rows: CodeRow[] }) {
 
 function Plain({ code, tone }: { code: string; tone: 'rose' | 'emerald' }) {
   return (
-    <pre className={cn('overflow-x-auto p-4 font-mono text-xs leading-6', tone === 'rose' ? 'text-rose-100' : 'text-emerald-100')} data-testid="code-plain">
+    // biome-ignore lint/a11y/noNoninteractiveTabindex: long code scrolls; keyboard users need to focus it
+    <pre tabIndex={0} className={cn('overflow-x-auto p-4 font-mono text-xs leading-6', tone === 'rose' ? 'text-rose-100' : 'text-emerald-100')} data-testid="code-plain">
       {code}
     </pre>
   )
