@@ -1,5 +1,6 @@
 # WebSec Lab: интерактивная площадка по веб-безопасности
 
+[![CI](https://github.com/TroubieD3v/websec-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/TroubieD3v/websec-lab/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-a2a6ae)](LICENSE)
 ![OWASP Top 10:2025](https://img.shields.io/badge/OWASP%20Top%2010-2025-e8a33d)
 ![Labs](https://img.shields.io/badge/labs-12-7cc4e8)
@@ -46,6 +47,8 @@ Attack Playground для HTTP-запросов, сравнение кода, п�
 ## Быстрый старт (Docker)
 
 ```bash
+git clone https://github.com/TroubieD3v/websec-lab.git
+cd websec-lab
 docker compose up --build
 ```
 

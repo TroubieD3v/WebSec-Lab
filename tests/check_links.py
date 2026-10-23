@@ -18,7 +18,7 @@ from pathlib import Path
 
 CONTENT = Path(__file__).resolve().parent.parent / "backend" / "app" / "content"
 URL = re.compile(r'Reference\(\s*(?:"[^"]*"|\'[^\']*\')\s*,\s*\n?\s*"(https?://[^"]+)"', re.S)
-HEADERS = {"User-Agent": "websec-lab-link-check/1.0 (+https://github.com/)"}
+HEADERS = {"User-Agent": "websec-lab-link-check/1.0 (+https://github.com/TroubieD3v/websec-lab)"}
 
 
 def urls() -> dict[str, list[str]]:
