@@ -74,7 +74,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A01 Broken Access Control", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing for Privilege Escalation",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/05-Authorization_Testing/03-Testing_for_Privilege_Escalation",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/05-Authorization_Testing/03-Testing_for_Privilege_Escalation/",
         ),
         Reference(
             "Cheat Sheet: Authorization",

@@ -59,7 +59,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A01 Broken Access Control", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing for IDOR",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References/",
         ),
         Reference(
             "Cheat Sheet: IDOR Prevention",

@@ -70,11 +70,11 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A07 Authentication Failures", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing JSON Web Tokens",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/06-Session_Management_Testing/10-Testing_JSON_Web_Tokens",
+            "https://wstg.owasp.org/latest/4-Web_Application_Security_Testing/06-Session_Management/10-JSON_Web_Tokens/",
         ),
         Reference(
-            "Cheat Sheet: JSON Web Token for Java",
-            "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+            "Cheat Sheet: JSON Web Token",
+            "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html",
         ),
         Reference("RFC 8725: JWT Best Current Practices", "https://www.rfc-editor.org/rfc/rfc8725"),
     ),

@@ -65,7 +65,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A05 Injection", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing for SQL Injection",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection/",
         ),
         Reference(
             "Cheat Sheet: SQL Injection Prevention",

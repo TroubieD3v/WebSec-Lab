@@ -62,7 +62,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A06 Insecure Design", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Test for Process Timing",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/10-Business_Logic_Testing/04-Test_for_Process_Timing",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/10-Business_Logic_Testing/04-Test_for_Process_Timing/",
         ),
         Reference("CWE-362: Race Condition", "https://cwe.mitre.org/data/definitions/362.html"),
         Reference("CWE-367: TOCTOU", "https://cwe.mitre.org/data/definitions/367.html"),

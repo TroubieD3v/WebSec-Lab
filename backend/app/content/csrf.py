@@ -81,7 +81,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A01 Broken Access Control", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing for CSRF",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery/",
         ),
         Reference(
             "Cheat Sheet: CSRF Prevention",

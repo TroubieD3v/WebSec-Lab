@@ -14,6 +14,20 @@ cd frontend && npm run typecheck && npm run build
 cd tests/e2e && npx playwright test      # needs the stack running (docker compose up, or the three dev servers)
 ```
 
+## Release checklist
+
+```bash
+pytest && (cd frontend && npm run typecheck && npm run build)
+python tests/check_links.py                    # every reference URL still resolves (needs internet)
+docker compose up --build --detach --wait
+python tests/smoke.py                          # every lab verifies against both modes
+(cd tests/e2e && npx playwright test)          # browser tests against the Docker stack
+docker compose down --volumes
+```
+
+Then update `CHANGELOG.md`, bump the versions (`backend/app/__init__.py`, `frontend/package.json`,
+`tests/e2e/package.json`), commit, and tag `vX.Y.Z` (the release workflow publishes the notes).
+
 ## Adding a lab
 
 The step-by-step list is at the end of [docs/architecture.md](docs/architecture.md). In short:

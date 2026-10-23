@@ -64,7 +64,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A06 Insecure Design", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Test Upload of Unexpected File Types",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/10-Business_Logic_Testing/08-Test_Upload_of_Unexpected_File_Types",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/10-Business_Logic_Testing/08-Test_Upload_of_Unexpected_File_Types/",
         ),
         Reference(
             "Cheat Sheet: File Upload",

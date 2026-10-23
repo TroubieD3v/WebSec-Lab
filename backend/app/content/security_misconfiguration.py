@@ -64,7 +64,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A02 Security Misconfiguration", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Configuration and Deployment Management Testing",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/",
         ),
         Reference(
             "OWASP Secure Headers Project",

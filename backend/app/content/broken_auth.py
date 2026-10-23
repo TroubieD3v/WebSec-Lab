@@ -89,11 +89,11 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A07 Authentication Failures", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing for Weak Lock Out Mechanism",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/04-Authentication_Testing/03-Testing_for_Weak_Lock_Out_Mechanism",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/04-Authentication_Testing/03-Testing_for_Weak_Lock_Out_Mechanism/",
         ),
         Reference(
             "WSTG: Testing for Logout Functionality",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/06-Session_Management_Testing/06-Testing_for_Logout_Functionality",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/06-Session_Management_Testing/06-Testing_for_Logout_Functionality/",
         ),
         Reference(
             "Cheat Sheet: Authentication",

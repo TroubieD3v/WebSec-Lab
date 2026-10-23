@@ -124,7 +124,8 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](
 | v0.3.0 | Code Diff, hints, progress tracking |
 | v0.4.0 | Full automated test suite and CI |
 | v0.5.0 | Stored XSS, Broken Access Control, Path Traversal, Security Misconfiguration |
-| **v1.0.0** | **All twelve labs, documentation, hardened Docker setup** |
+| v1.0.0 | All twelve labs, documentation, hardened Docker setup |
+| **v1.0.1** | **Fixed dead reference links; link checker** |
 
 ## License
 

@@ -2,6 +2,17 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.1]
+
+### Fixed
+- Two dead reference links in the JWT lab (the WSTG page moved to `06-Session_Management/10-JSON_Web_Tokens`, the OWASP
+  cheat sheet is now `JSON_Web_Token_Cheat_Sheet`).
+- WSTG links now use the canonical `wstg.owasp.org` host instead of relying on redirects.
+
+### Added
+- `tests/check_links.py` verifies every reference URL (run it before a release). CWE links are reported as unverifiable
+  when `cwe.mitre.org` cannot be reached from the machine running the check.
+
 ## [1.0.0]
 
 First stable release: twelve labs, bilingual interface, hardened Docker setup.
@@ -13,7 +24,8 @@ First stable release: twelve labs, bilingual interface, hardened Docker setup.
   (check-then-act on a single-use coupon; parallel burst in the UI).
 - Per-mode "reset" helpers for the CSRF bank and the Race Condition wallet so experiments can be repeated.
 - `python-multipart` for the labs service (multipart uploads and form posts).
-- `CONTRIBUTING.md`, this changelog, a release workflow.
+- `CONTRIBUTING.md`, this changelog, a release workflow, `tests/smoke.py` (every lab verifies against a running stack)
+  and a CI job that starts each service with only its own `requirements.txt` (caught a missing `httpx` in the labs image).
 
 ### Changed
 - Dashboard no longer shows a roadmap section once every lab is playable; the labs statistic reports how many

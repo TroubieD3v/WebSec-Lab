@@ -62,7 +62,7 @@ LAB = LabDefinition(
         Reference("OWASP Top 10:2025: A05 Injection", "https://top10.owasp.org/2025/"),
         Reference(
             "WSTG: Testing for Reflected XSS",
-            "https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting",
+            "https://wstg.owasp.org/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting/",
         ),
         Reference(
             "Cheat Sheet: XSS Prevention",
