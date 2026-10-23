@@ -63,8 +63,10 @@ previews) are bound to the loopback interface only. Progress is kept in the `pro
 
 **Troubleshooting**
 
-- *Port already in use*: stop whatever uses `3000` or `8081`, or change the left-hand port in `compose.yaml`
-  (if you change `8081`, also update `frame-src` / `img-src` in `frontend/nginx.conf`).
+- *Port 3000 already in use*: pick another dashboard port, e.g. `DASHBOARD_PORT=3100 docker compose up --build`
+  (PowerShell: `$env:DASHBOARD_PORT=3100; docker compose up --build`), then open that port.
+- *Port 8081 already in use*: stop whatever uses it, or change it in `compose.yaml` **and** in `frame-src` / `img-src`
+  of `frontend/nginx.conf` (the sandboxed previews load from that port).
 - *Open it as `127.0.0.1` or `localhost`*: other host names are blocked by the dashboard's CSP.
 - *"Lab service is not reachable"* on the dashboard: `docker compose ps` should show all three services healthy.
 
@@ -125,7 +127,8 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](
 | v0.4.0 | Full automated test suite and CI |
 | v0.5.0 | Stored XSS, Broken Access Control, Path Traversal, Security Misconfiguration |
 | v1.0.0 | All twelve labs, documentation, hardened Docker setup |
-| **v1.0.1** | **Fixed dead reference links; link checker** |
+| v1.0.1 | Fixed dead reference links; link checker |
+| **v1.0.2** | **Configurable dashboard port; Docker stack verified end to end** |
 
 ## License
 

@@ -17,7 +17,7 @@ services:
     <<: *hardened
     build: ./frontend
     ports:
-      - "127.0.0.1:3000:3000"   # dashboard
+      - "127.0.0.1:${DASHBOARD_PORT:-3000}:3000"   # dashboard (set DASHBOARD_PORT if 3000 is taken)
       - "127.0.0.1:8081:8081"   # isolated lab origin (XSS iframe only)
     depends_on:
       backend: { condition: service_healthy }

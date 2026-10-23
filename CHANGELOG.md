@@ -2,6 +2,18 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.0.2]
+
+### Added
+- `DASHBOARD_PORT` selects the host port of the dashboard (default `3000`), e.g. when another project already uses it.
+
+### Verified
+- The Docker Compose stack was built and run on Docker Desktop 4.69 (Docker 29.4): all three images build, all services
+  become healthy, `tests/smoke.py` verifies 12/12 labs and the 43 Playwright tests pass against the containers.
+- On the running containers: non-root users, read-only root file systems, `cap_drop: ALL`, `no-new-privileges`, memory
+  limits, no outbound network from `labs` and `backend`, the lab origin (`:8081`) returns `404` for everything except the
+  pages the sandboxed previews need, and the dashboard sends its CSP and hardening headers.
+
 ## [1.0.1]
 
 ### Fixed
