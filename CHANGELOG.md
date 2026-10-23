@@ -2,6 +2,26 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.1.0]
+
+### Changed
+- **A lab is completed only after you watch the fix block your own attack.** Previously exploiting the vulnerable mode
+  and clicking "Run automatic verification" was enough, so the "verify the fix" step was ticked without the learner
+  ever touching the fixed mode. Every lab now detects, on the server, when the same kind of attack reaches the fixed
+  mode and is refused. Progress shows four steps: exploit, repeat in fixed mode, verification, completed; the hint
+  under the task always names the next step.
+- Existing progress databases are migrated: completions recorded under the old rule are withdrawn (your exploits,
+  hints and verification runs are kept).
+- Verification results show a fourth verdict, "You saw the fix block your attack".
+
+### Fixed
+- Mobile layout: the header and every Attack Playground (plus the CSRF widget) overflowed horizontally below ~640 px;
+  the "Local Lab" badge could not be hidden on small screens.
+- `<html lang>` was always `en` until the language was switched by hand.
+- A lab page could keep the previous lab's mode and tab when navigating between labs with browser history.
+- One untranslated preset label in the Broken Access Control lab; a test now checks Russian coverage for every lab,
+  hint, preset and verification check.
+
 ## [1.0.2]
 
 ### Added

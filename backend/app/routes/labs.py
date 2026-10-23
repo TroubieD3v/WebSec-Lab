@@ -38,8 +38,11 @@ async def sync_exploit(request: Request, lab_ids: tuple[str, ...], timeout: floa
                     response.raise_for_status()
                 except httpx.HTTPError:
                     return False
-                if response.json().get("solved"):
+                status = response.json()
+                if status.get("solved"):
                     store.mark_exploited(lab_id)
+                if status.get("blocked"):
+                    store.mark_defended(lab_id)
                 return True
 
         return all(await asyncio.gather(*(one(i) for i in lab_ids)))
@@ -143,6 +146,7 @@ async def verify(lab_id: str, request: Request, lang: str = Query("en")):
         "vulnerability_confirmed": verdict.vulnerability_confirmed,
         "fix_confirmed": verdict.fix_confirmed,
         "exploited_by_you": progress["exploited"],
+        "defended_by_you": progress["defended"],
         "completed": progress["completed"],
         "completed_now": completed_now,
         "passed": passed,

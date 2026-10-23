@@ -13,6 +13,9 @@ test('hints are tracked and progress, achievements and history update', async ({
   await page.getByTestId('idor-id').fill('102')
   await page.getByTestId('idor-open').click()
   await expect(page.getByTestId('idor-leak')).toBeVisible() // the exploit request has completed
+  await page.getByTestId('mode-fixed').click()
+  await page.getByTestId('idor-open').click()
+  await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   await page.getByTestId('tab-verify').click()
   await page.getByTestId('verify-run').click()
   await expect(page.getByTestId('verify-summary')).toContainText('Lab completed!')

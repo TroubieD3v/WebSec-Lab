@@ -7,16 +7,20 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
   const { t } = useI18n()
   const steps = [
     { done: progress.exploited, label: t('step.exploit'), id: 'exploit' },
+    { done: progress.defended, label: t('step.defend'), id: 'defend' },
     { done: progress.fix_verified, label: t('step.verify'), id: 'verify' },
     { done: progress.completed, label: t('step.complete'), id: 'complete' },
   ]
+  // Always point at the next thing the learner has to do themselves.
   const message = progress.completed
     ? t('msg.done')
-    : progress.exploited
-      ? t('msg.exploited')
-      : progress.fix_verified
-        ? t('msg.fixedFirst')
-        : t('msg.start')
+    : progress.exploited && progress.defended
+      ? t('msg.verify')
+      : progress.exploited
+        ? t('msg.exploited')
+        : progress.defended
+          ? t('msg.defendedFirst')
+          : t('msg.start')
   return (
     <div className="space-y-3" aria-label={t('lab.progress')}>
       <ol className="flex flex-wrap gap-x-5 gap-y-2">

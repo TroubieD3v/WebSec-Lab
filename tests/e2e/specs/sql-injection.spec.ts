@@ -21,6 +21,7 @@ test('exploit in vulnerable mode, blocked in fixed mode, lab completes after ver
   await page.getByTestId('mode-fixed').click()
   await search(page, "' OR 1=1 --")
   await expect(page.getByText('No products found.')).toBeVisible()
+  await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
 
   await page.getByTestId('tab-verify').click()
   await page.getByTestId('verify-run').click()
@@ -42,7 +43,7 @@ test('verification alone never completes a lab', async ({ page }) => {
   await page.goto('/labs/sql-injection')
   await page.getByTestId('tab-verify').click()
   await page.getByTestId('verify-run').click()
-  await expect(page.getByTestId('verify-summary')).toContainText('exploit the Vulnerable mode yourself')
+  await expect(page.getByTestId('verify-summary')).toContainText('repeated that attack in Fixed mode')
   await expect(page.getByTestId('lab-status')).toContainText('Not started')
 })
 

@@ -16,7 +16,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
-from common import Mode, lab_js, mark_solved, render_page
+from common import Mode, lab_js, mark_blocked, mark_solved, render_page
 
 LAB_ID = "stored-xss"
 SOURCE_FILE = Path(__file__)
@@ -85,10 +85,14 @@ def clear_comments(mode: Mode):
 
 
 @router.get("/{mode}/page", response_class=HTMLResponse)
-def page(mode: Mode):
+def page(mode: Mode, request: Request):
     render = vulnerable_render if mode == "vulnerable" else fixed_render
     with _lock:
-        content = render(list(_comments[mode]))
+        comments = list(_comments[mode])
+        content = render(comments)
+    if mode == "fixed" and any("<" in c["author"] + c["text"] for c in comments):
+        mark_blocked(LAB_ID, request)  # stored markup was served as inert text
+
     headers = {"Content-Security-Policy": FIXED_CSP} if mode == "fixed" else {}
     return HTMLResponse(render_page(LAB_ID, mode, "Guestbook", content), headers=headers)
 

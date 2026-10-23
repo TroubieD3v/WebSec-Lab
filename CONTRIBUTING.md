@@ -33,7 +33,9 @@ Then update `CHANGELOG.md`, bump the versions (`backend/app/__init__.py`, `front
 The step-by-step list is at the end of [docs/architecture.md](docs/architecture.md). In short:
 
 1. `labs/<package>/router.py`: the vulnerable and fixed code between `# region vulnerable` / `# region fixed`.
-   Keep challenge detection (`mark_solved`) in the endpoint glue, **outside** the regions, so the Code Diff shows only
+   Detect the learner's progress with `mark_solved` (the attack worked in vulnerable mode) and `mark_blocked` (the same
+   attack was refused in fixed mode; ordinary use must not trigger it). Keep both in the endpoint glue, **outside** the
+   regions, so the Code Diff shows only
    the lesson.
 2. `backend/app/content/<lab>.py`: English **and** Russian text, three hints, presets, references.
 3. A verifier in `backend/app/services/verification.py` with `functional`, `attack` and `defense` checks.

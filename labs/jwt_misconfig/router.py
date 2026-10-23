@@ -21,7 +21,7 @@ from typing import Any
 from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "jwt"
 SOURCE_FILE = Path(__file__)
@@ -142,11 +142,16 @@ def me(mode: Mode, authorization: str | None = Header(None)):
 @router.get("/{mode}/admin")
 def admin(mode: Mode, request: Request, authorization: str | None = Header(None)):
     token = _bearer(authorization)
-    claims = (vulnerable_verify if mode == "vulnerable" else fixed_verify)(STATE, token)
-    if claims.get("role") != "admin":
-        raise HTTPException(403, "Administrator role required")
     with _lock:
         forged = token not in STATE.issued
+    try:
+        claims = (vulnerable_verify if mode == "vulnerable" else fixed_verify)(STATE, token)
+    except HTTPException:
+        if mode == "fixed" and forged:
+            mark_blocked(LAB_ID, request)  # a forged token was presented to the admin area and refused
+        raise
+    if claims.get("role") != "admin":
+        raise HTTPException(403, "Administrator role required")
     if mode == "vulnerable" and forged:
         mark_solved(LAB_ID, request)
     return {"secret": "The admin panel: rotate all API keys before Friday.", "user": claims.get("sub")}

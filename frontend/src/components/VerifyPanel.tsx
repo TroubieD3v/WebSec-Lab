@@ -82,14 +82,15 @@ export function VerifyPanel({ labId, onProgress }: Props) {
       {result && (
         <>
           <Card className="space-y-3 p-4" data-testid="verify-summary">
-            <div className="grid gap-2 sm:grid-cols-3">
+            <div className="grid gap-2 sm:grid-cols-2">
               <Verdict ok={result.vulnerability_confirmed} label={t('verify.vuln')} />
               <Verdict ok={result.fix_confirmed} label={t('verify.fix')} />
               <Verdict ok={result.exploited_by_you} pending label={t('verify.you')} />
+              <Verdict ok={result.defended_by_you} pending label={t('verify.defended')} />
             </div>
             <p className="text-sm text-zinc-400">{t('verify.passed', { passed: result.passed, total: result.total })}</p>
             {result.completed && <p className="text-sm font-medium text-emerald-300">{t('verify.completed')}</p>}
-            {allPass && !result.completed && <p className="text-sm text-amber-300">{t('verify.needExploit')}</p>}
+            {allPass && !result.completed && <p className="text-sm text-amber-300">{t('verify.needSteps')}</p>}
             {!allPass && <p className="text-sm text-rose-300">{t('verify.failed')}</p>}
           </Card>
           <div className="grid gap-4 lg:grid-cols-2">

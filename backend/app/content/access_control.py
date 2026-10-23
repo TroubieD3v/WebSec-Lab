@@ -65,7 +65,7 @@ LAB = LabDefinition(
             "PATCH", "profile", JSON, '{"display_name": "Ally"}',
         ),
         Preset(
-            {"en": "Alice: set role=admin", "ru": "Alice: role=admin"},
+            {"en": "Alice: set role=admin", "ru": "Alice: назначить себе role=admin"},
             "PATCH", "profile", JSON, '{"role": "admin"}',
         ),
         Preset({"en": "Admin: user list", "ru": "Админ: список пользователей"}, "GET", "admin/users", ADMIN),

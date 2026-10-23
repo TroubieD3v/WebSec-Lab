@@ -18,7 +18,7 @@ from pathlib import Path
 from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "broken-auth"
 SOURCE_FILE = Path(__file__)
@@ -131,7 +131,12 @@ class LoginBody(BaseModel):
 def login(mode: Mode, body: LoginBody, request: Request):
     with STATE.lock:
         if mode == "fixed":
-            return {"token": fixed_login(STATE, body.username, body.password)}
+            try:
+                return {"token": fixed_login(STATE, body.username, body.password)}
+            except HTTPException as exc:
+                if exc.status_code == 429:
+                    mark_blocked(LAB_ID, request)  # password guessing ran into the lockout
+                raise
         try:
             token = vulnerable_login(STATE, body.username, body.password)
         except HTTPException:
@@ -148,6 +153,8 @@ def me(mode: Mode, request: Request, authorization: str | None = Header(None)):
     with STATE.lock:
         user = (fixed_me if mode == "fixed" else vulnerable_me)(STATE, token)
         if user is None:
+            if mode == "fixed" and token in STATE.logged_out:
+                mark_blocked(LAB_ID, request)  # a session was reused after logout and refused
             raise HTTPException(401, "Not authenticated")
         if mode == "vulnerable" and token in STATE.logged_out:
             mark_solved(LAB_ID, request)
@@ -159,6 +166,8 @@ def logout(mode: Mode, authorization: str | None = Header(None)):
     token = bearer(authorization)
     with STATE.lock:
         if mode == "fixed":
+            if token in STATE.secure_sessions:
+                STATE.logged_out.add(token)
             fixed_logout(STATE, token)
         else:
             vulnerable_logout(STATE, token)

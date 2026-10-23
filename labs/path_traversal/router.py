@@ -12,7 +12,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "path-traversal"
 SOURCE_FILE = Path(__file__)
@@ -52,7 +52,12 @@ def fixed_read(name):
 
 @router.get("/{mode}/files")
 def read_file(mode: Mode, request: Request, name: str = Query(..., max_length=300)):
-    path, content = (vulnerable_read if mode == "vulnerable" else fixed_read)(name)
+    try:
+        path, content = (vulnerable_read if mode == "vulnerable" else fixed_read)(name)
+    except HTTPException as exc:
+        if mode == "fixed" and exc.status_code == 403:
+            mark_blocked(LAB_ID, request)  # an escape from the documents folder was refused
+        raise
     if content is None:
         raise HTTPException(404, "File not found")
     if mode == "vulnerable" and not path.startswith(DOCS_ROOT + "/"):

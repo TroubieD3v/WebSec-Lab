@@ -67,3 +67,21 @@ def test_labs_offline_is_reported_not_crashing(offline_api):
     assert offline_api.get("/api/labs/xss/code").status_code == 502
     assert offline_api.post("/api/labs/xss/verify").status_code == 502
     assert offline_api.get("/api/labs/xss/vulnerable/search").status_code == 502
+
+
+def test_every_lab_and_every_check_is_fully_translated(api):
+    """A missing Russian string would silently fall back to English; catch it for all labs."""
+    import re
+
+    cyrillic = re.compile("[а-яё]", re.I)
+    for lab_id in LABS:
+        en = api.get(f"/api/labs/{lab_id}", params={"lang": "en"}).json()
+        ru = api.get(f"/api/labs/{lab_id}", params={"lang": "ru"}).json()
+        for field in ("title", "summary", "task", "root_cause", "fix"):
+            assert cyrillic.search(ru[field]) and ru[field] != en[field], (lab_id, field)
+        for level in range(1, ru["hint_count"] + 1):
+            hint = api.post(f"/api/labs/{lab_id}/hints/{level}", params={"lang": "ru"}).json()["text"]
+            assert cyrillic.search(hint), (lab_id, "hint", level)
+        assert all(cyrillic.search(p["label"]) or p["label"] == e["label"] for p, e in zip(ru["presets"], en["presets"]))
+        checks = api.post(f"/api/labs/{lab_id}/verify", params={"lang": "ru"}).json()["checks"]
+        assert all(cyrillic.search(c["title"]) for c in checks), (lab_id, [c["title"] for c in checks if not cyrillic.search(c["title"])])

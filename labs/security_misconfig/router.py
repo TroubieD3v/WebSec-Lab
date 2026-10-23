@@ -15,7 +15,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "security-misconfiguration"
 SOURCE_FILE = Path(__file__)
@@ -95,12 +95,18 @@ def order(mode: Mode, order_ref: str, request: Request):
         status, body = (vulnerable_error if mode == "vulnerable" else fixed_error)(exc)
         if mode == "vulnerable":
             mark_solved(LAB_ID, request)
+        else:
+            mark_blocked(LAB_ID, request)  # the same error produced no internals
         return _respond(mode, status, body)
 
 
 @router.get("/{mode}/debug/config")
 def debug_config(mode: Mode, request: Request):
-    config = (vulnerable_debug_config if mode == "vulnerable" else fixed_debug_config)()
+    try:
+        config = (vulnerable_debug_config if mode == "vulnerable" else fixed_debug_config)()
+    except HTTPException:
+        mark_blocked(LAB_ID, request)  # the debug route does not exist in the fixed configuration
+        raise
     if mode == "vulnerable":
         mark_solved(LAB_ID, request)
     return _respond(mode, 200, config)

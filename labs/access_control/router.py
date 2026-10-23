@@ -16,7 +16,7 @@ from typing import Any
 from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, ConfigDict
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "broken-access-control"
 SOURCE_FILE = Path(__file__)
@@ -105,7 +105,12 @@ def admin_users(mode: Mode, request: Request, authorization: str | None = Header
     user = current_user(authorization)
     with _lock:
         was_admin = STATE.users[user]["role"] == "admin"
-        users = (vulnerable_list_users if mode == "vulnerable" else fixed_list_users)(STATE, user)
+        try:
+            users = (vulnerable_list_users if mode == "vulnerable" else fixed_list_users)(STATE, user)
+        except HTTPException as exc:
+            if mode == "fixed" and exc.status_code == 403:
+                mark_blocked(LAB_ID, request)  # a regular user tried the admin API
+            raise
         if mode == "vulnerable" and not was_admin:
             mark_solved(LAB_ID, request)
         return {"users": users}
@@ -120,7 +125,12 @@ def update_profile(mode: Mode, changes: ProfileChanges, request: Request, author
     with _lock:
         was_admin = STATE.users[user]["role"] == "admin"
         update = vulnerable_update_profile if mode == "vulnerable" else fixed_update_profile
-        profile = update(STATE, user, submitted)
+        try:
+            profile = update(STATE, user, submitted)
+        except HTTPException as exc:
+            if mode == "fixed" and exc.status_code == 400:
+                mark_blocked(LAB_ID, request)  # privileged fields were submitted and refused
+            raise
         if mode == "vulnerable" and profile["role"] == "admin" and not was_admin:
             mark_solved(LAB_ID, request)
         return profile

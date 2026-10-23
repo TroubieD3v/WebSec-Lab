@@ -29,6 +29,7 @@ test.describe('reflected XSS runs in an isolated sandbox', () => {
     await page.waitForTimeout(1000)
     await expect(page.getByTestId('xss-executed')).toHaveCount(0)
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 
   test('injected script cannot reach the dashboard (sandbox + separate origin)', async ({ page }) => {

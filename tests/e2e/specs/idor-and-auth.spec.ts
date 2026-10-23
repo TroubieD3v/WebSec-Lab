@@ -12,6 +12,7 @@ test.describe('IDOR', () => {
     await page.getByTestId('mode-fixed').click()
     await page.getByTestId('idor-open').click()
     await expect(page.getByTestId('idor-status')).toHaveText('403')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
     await expect(page.getByTestId('idor-leak')).toHaveCount(0)
   })
 
@@ -40,6 +41,7 @@ test.describe('Broken authentication', () => {
     await page.getByTestId('auth-wordlist').click()
     await expect(page.getByTestId('auth-note')).toContainText('HTTP 429')
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 
   test('session survives logout in vulnerable mode only', async ({ page }) => {

@@ -129,7 +129,7 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
             <img src={previewSrc ?? ''} alt="" className="max-h-40 rounded border border-zinc-700 bg-white" data-testid="upload-image" />
           </Card>
         ) : (
-          <SandboxPreview src={previewSrc} labId={LAB} onExecuted={onActivity} />
+          <SandboxPreview src={previewSrc} labId={LAB} onActivity={onActivity} />
         )}
       </div>
     </div>

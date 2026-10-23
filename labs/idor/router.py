@@ -11,7 +11,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Header, HTTPException, Request
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "idor"
 SOURCE_FILE = Path(__file__)
@@ -71,7 +71,12 @@ def list_bookings(mode: Mode, authorization: str | None = Header(None)):
 def get_booking(mode: Mode, booking_id: int, request: Request, authorization: str | None = Header(None)):
     user = current_user(authorization)
     get = vulnerable_get_booking if mode == "vulnerable" else fixed_get_booking
-    booking = get(booking_id, user)
+    try:
+        booking = get(booking_id, user)
+    except HTTPException as exc:
+        if mode == "fixed" and exc.status_code == 403:
+            mark_blocked(LAB_ID, request)  # someone else's booking was requested and refused
+        raise
     if mode == "vulnerable" and booking["owner"] != user:
         mark_solved(LAB_ID, request)
     return booking

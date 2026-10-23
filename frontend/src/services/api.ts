@@ -6,6 +6,7 @@ export type LabStatus = 'not_started' | 'vulnerability_found' | 'completed'
 export interface LabProgress {
   status: LabStatus
   exploited: boolean
+  defended: boolean
   fix_verified: boolean
   completed: boolean
   hints_used: number
@@ -71,6 +72,7 @@ export interface VerifyResult {
   vulnerability_confirmed: boolean
   fix_confirmed: boolean
   exploited_by_you: boolean
+  defended_by_you: boolean
   completed: boolean
   completed_now: boolean
   passed: number
@@ -84,6 +86,7 @@ export interface ProgressData {
   labs_planned: number
   completed: number
   exploited: number
+  defended: number
   hints_used: number
   checks_run: number
   checks_passed: number

@@ -8,7 +8,8 @@ export function cn(...parts: (string | false | null | undefined)[]): string {
 }
 
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('rounded-xl border border-zinc-800 bg-zinc-900/60 backdrop-blur', className)} {...props} />
+  // min-w-0: as a grid/flex item a card must be allowed to shrink below its widest line (code blocks scroll instead).
+  return <div className={cn('min-w-0 rounded-xl border border-zinc-800 bg-zinc-900/60 backdrop-blur', className)} {...props} />
 }
 
 type Tone = 'neutral' | 'green' | 'red' | 'amber' | 'blue' | 'violet'

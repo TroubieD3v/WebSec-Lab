@@ -34,15 +34,15 @@ export function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
-          <NavLink to="/" className="flex items-center gap-2.5">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6">
+          <NavLink to="/" className="flex shrink-0 items-center gap-2.5" aria-label={t('app.name')}>
             <ShieldCheck className="size-6 text-emerald-400" aria-hidden />
-            <span className="leading-tight">
+            <span className="hidden leading-tight sm:block">
               <span className="block text-sm font-semibold tracking-tight">{t('app.name')}</span>
-              <span className="hidden text-[11px] text-zinc-500 sm:block">{t('app.tagline')}</span>
+              <span className="block text-[11px] text-zinc-500">{t('app.tagline')}</span>
             </span>
           </NavLink>
-          <nav className="flex gap-1">
+          <nav className="flex min-w-0 gap-1">
             <NavLink to="/" end className={link}>
               {t('nav.labs')}
             </NavLink>
@@ -51,9 +51,12 @@ export function Layout() {
             </NavLink>
           </nav>
           <div className="ml-auto flex items-center gap-3">
-            <Badge tone="green" className="hidden sm:inline-flex">
-              <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> {t('badge.local')}
-            </Badge>
+            {/* Wrapped: Badge's own inline-flex would override a `hidden` class on the badge itself. */}
+            <span className="hidden md:block">
+              <Badge tone="green">
+                <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> {t('badge.local')}
+              </Badge>
+            </span>
             <LangSwitch />
           </div>
         </div>

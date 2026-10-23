@@ -17,7 +17,7 @@ from pathlib import Path
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import JSONResponse
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "sql-injection"
 SOURCE_FILE = Path(__file__)
@@ -136,6 +136,9 @@ def search_products(mode: Mode, request: Request, name: str = Query("", max_leng
                 return JSONResponse(body, status_code=500)
             return JSONResponse({"mode": mode, "error": "Invalid request"}, status_code=400)
     sql = captured[-1] if captured else None
-    if mode == "vulnerable" and any(v in PROTECTED_VALUES for r in rows for v in r.values()):
+    leaked = any(v in PROTECTED_VALUES for r in rows for v in r.values())
+    if mode == "vulnerable" and leaked:
         mark_solved(LAB_ID, request)
+    if mode == "fixed" and "'" in name and not leaked:
+        mark_blocked(LAB_ID, request)  # an injection attempt hit the parameterized query and changed nothing
     return {"mode": mode, "query": sql, "count": len(rows), "rows": rows}

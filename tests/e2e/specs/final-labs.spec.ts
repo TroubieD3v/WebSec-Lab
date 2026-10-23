@@ -24,6 +24,7 @@ test.describe('CSRF', () => {
     await page.getByTestId('csrf-transfer').click()
     await expect(page.getByTestId('csrf-balance-bob')).toHaveText('250')
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 
   test('balances can be reset to repeat the attack', async ({ page }) => {
@@ -72,6 +73,7 @@ test.describe('JWT', () => {
     }
     await expect(page.getByTestId('jwt-admin-open')).toHaveCount(0)
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 })
 
@@ -99,6 +101,7 @@ test.describe('File Upload', () => {
     await expect(page.getByTestId('upload-saved-as')).toContainText('.png')
     await expect(page.getByTestId('upload-image')).toBeVisible()
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 })
 
@@ -120,6 +123,7 @@ test.describe('Race Condition', () => {
     await expect(page.getByTestId('race-balance')).toHaveText('10')
     await expect(page.getByTestId('race-redemptions')).toHaveText('1')
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 
   test('a single sequential redemption works and the wallet can be reset', async ({ page }) => {
@@ -135,26 +139,29 @@ test.describe('Race Condition', () => {
 
 test('all twelve labs complete end-to-end through the verification tab', async ({ page, request }) => {
   const alice = { Authorization: 'Bearer alice-demo-token' }
-  const exploits: Record<string, () => Promise<unknown>> = {
-    csrf: () => request.post('/api/labs/csrf/vulnerable/browser/visit-attacker-page', { data: { to: 'mallory', amount: 5 } }),
-    jwt: async () => {
+  const exploits: Record<string, (mode: string) => Promise<unknown>> = {
+    csrf: (mode) => request.post(`/api/labs/csrf/${mode}/browser/visit-attacker-page`, { data: { to: 'mallory', amount: 5 } }),
+    jwt: async (mode) => {
       const none = (o: object) => Buffer.from(JSON.stringify(o)).toString('base64url')
       const token = `${none({ alg: 'none' })}.${none({ sub: 'x', role: 'admin' })}.`
-      return request.get('/api/labs/jwt/vulnerable/admin', { headers: { Authorization: `Bearer ${token}` } })
+      return request.get(`/api/labs/jwt/${mode}/admin`, { headers: { Authorization: `Bearer ${token}` } })
     },
-    'file-upload': async () => {
-      const upload = await request.post('/api/labs/file-upload/vulnerable/upload', {
+    'file-upload': async (mode) => {
+      const upload = await request.post(`/api/labs/file-upload/${mode}/upload`, {
         multipart: { file: { name: 'e.html', mimeType: 'text/html', buffer: Buffer.from('<b>x</b>') } },
       })
+      if (!upload.ok()) return upload // fixed mode refuses the file: that is the blocked attack
       const { filename } = await upload.json()
-      return request.get(`http://127.0.0.1:8081/file-upload/vulnerable/uploads/${filename}`)
+      return request.get(`http://127.0.0.1:8081/file-upload/${mode}/uploads/${filename}`)
     },
-    'race-condition': () =>
-      Promise.all(Array.from({ length: 8 }, () => request.post('/api/labs/race-condition/vulnerable/redeem', { data: { code: 'WELCOME10' } }))),
-    idor: () => request.get('/api/labs/idor/vulnerable/bookings/102', { headers: alice }),
+    'race-condition': (mode) =>
+      Promise.all(Array.from({ length: 8 }, () => request.post(`/api/labs/race-condition/${mode}/redeem`, { data: { code: 'WELCOME10' } }))),
+    idor: (mode) => request.get(`/api/labs/idor/${mode}/bookings/102`, { headers: alice }),
   }
-  for (const [lab, exploit] of Object.entries(exploits)) {
-    await exploit()
+  // The same attack in both modes: it succeeds in vulnerable mode and is blocked in fixed mode.
+  for (const [lab, attack] of Object.entries(exploits)) {
+    await attack('vulnerable')
+    await attack('fixed')
     await page.goto(`/labs/${lab}`)
     await page.getByTestId('tab-verify').click()
     await page.getByTestId('verify-run').click()

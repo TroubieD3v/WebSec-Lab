@@ -35,7 +35,11 @@ cookies, caps body sizes, and returns HTML as `text/plain` inside a `Content-Sec
 `<iframe sandbox="allow-scripts">` (no `allow-same-origin`). `lab.js` replaces `alert()` with a `postMessage` to the
 parent plus a beacon request; the dashboard accepts messages only from that iframe's window.
 
-**Challenge detection.** Vulnerable endpoints call `mark_solved(lab)` when a request actually crosses the security
+**Challenge detection.** Two flags per lab, both set by the lab service from the learner's own requests.
+`mark_solved(lab)` is called by a vulnerable endpoint when an attack succeeds. `mark_blocked(lab)` is called by a
+fixed endpoint when the *same kind of attack* reaches it and is refused (a 403 for someone else's booking, a 415 for a
+disguised upload, markup rendered as text, a parallel burst where only one request wins); ordinary use of the fixed
+mode does not set it. In detail, `mark_solved(lab)` is set when a request actually crosses the security
 boundary (e.g. a booking owned by someone else is returned). The backend polls `GET /<lab>/status` and persists the
 first detection. Requests carrying the verifier header never count, and the proxy strips that header from user input,
 so only the learner's own exploit completes a lab.
@@ -47,7 +51,9 @@ so only the learner's own exploit completes a lab.
 - `attack`: the attack must succeed in vulnerable mode;
 - `defense`: the same attack must fail in fixed mode.
 
-A lab is **completed** when the vulnerability and fix are confirmed *and* the learner exploited it themselves.
+A lab is **completed** when the vulnerability and fix are confirmed *and* the learner both exploited the vulnerable
+mode and saw the fixed mode block that attack. The order does not matter. Databases from v1.0.x are migrated by adding
+`defended_at` and withdrawing completions recorded under the old, weaker rule.
 
 **Code Diff.** Lab source files mark the code that is shown with `# region vulnerable` / `# region fixed`.
 `GET /<lab>/source` extracts those regions at runtime, so the diff is always the code that really runs.
@@ -61,7 +67,8 @@ and an event log. Lab state (sessions, rate-limit counters, challenge flags) is 
 ## Adding a lab
 
 1. `labs/<package>/router.py`: define `LAB_ID`, `SOURCE_FILE`, `router`, `reset()`, and the code between
-   `# region vulnerable` / `# region fixed`. Call `mark_solved` from the endpoint glue (outside the regions) when the
+   `# region vulnerable` / `# region fixed`. Call `mark_solved` (attack succeeded, vulnerable mode) and `mark_blocked` (same attack refused, fixed mode) from
+   the endpoint glue (outside the regions) when the
    attack succeeds. Register it in `labs/main.py`.
 2. `backend/app/content/<lab>.py`: a `LabDefinition` with EN and RU text, three hints, presets and references; add it
    to `build_catalog()` (and remove the planned placeholder).

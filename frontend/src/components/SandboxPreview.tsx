@@ -13,15 +13,15 @@ interface Props {
   /** URL on the isolated lab origin, or null before the first render. */
   src: string | null
   labId: string
-  /** Called shortly after injected JavaScript ran (the lab's beacon request needs a moment to land). */
-  onExecuted: () => void
+  /** Called after the page loaded and after injected JavaScript ran, so progress can be re-checked. */
+  onActivity: () => void
 }
 
 /**
  * Renders untrusted lab HTML in `sandbox="allow-scripts"` (no allow-same-origin) from a separate origin.
  * The frame has an opaque origin, so messages are authenticated by source window, not by origin.
  */
-export function SandboxPreview({ src, labId, onExecuted }: Props) {
+export function SandboxPreview({ src, labId, onActivity }: Props) {
   const { t } = useI18n()
   const frame = useRef<HTMLIFrameElement>(null)
   const [executed, setExecuted] = useState<string | null>(null)
@@ -39,11 +39,11 @@ export function SandboxPreview({ src, labId, onExecuted }: Props) {
       )
         return
       setExecuted(String(data.detail ?? ''))
-      setTimeout(onExecuted, 250)
+      setTimeout(onActivity, 250) // give the beacon request time to land
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [labId, onExecuted])
+  }, [labId, onActivity])
 
   return (
     <Card className="space-y-3 p-4">
@@ -66,6 +66,7 @@ export function SandboxPreview({ src, labId, onExecuted }: Props) {
             sandbox="allow-scripts"
             referrerPolicy="no-referrer"
             className="h-56 w-full"
+            onLoad={onActivity}
             data-testid="xss-frame"
           />
         ) : (

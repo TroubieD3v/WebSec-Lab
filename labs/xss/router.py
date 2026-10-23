@@ -14,7 +14,7 @@ from pathlib import Path
 from fastapi import APIRouter, Query, Request, Response
 from fastapi.responses import HTMLResponse
 
-from common import Mode, lab_js, mark_solved, render_page
+from common import Mode, lab_js, mark_blocked, mark_solved, render_page
 
 LAB_ID = "xss"
 SOURCE_FILE = Path(__file__)
@@ -48,7 +48,9 @@ def serve_lab_js() -> Response:
 
 
 @router.get("/{mode}/search", response_class=HTMLResponse)
-def search(mode: Mode, q: str = Query("", max_length=2000)):
+def search(mode: Mode, request: Request, q: str = Query("", max_length=2000)):
+    if mode == "fixed" and "<" in q:
+        mark_blocked(LAB_ID, request)  # markup was submitted and is rendered as inert text
     render = vulnerable_render if mode == "vulnerable" else fixed_render
     page = render_page(LAB_ID, mode, "Shop search", render(q))
     headers = {"Content-Security-Policy": FIXED_CSP} if mode == "fixed" else {}

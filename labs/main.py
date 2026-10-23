@@ -24,7 +24,7 @@ import security_misconfig.router as security_misconfig
 import sql_injection.router as sql_injection
 import stored_xss.router as stored_xss
 import xss.router as xss
-from common import clear_solved, is_solved, source_payload
+from common import clear_solved, is_blocked, is_solved, source_payload
 
 MODULES = {
     m.LAB_ID: m
@@ -84,7 +84,7 @@ def health():
 @app.get("/{lab_id}/status")
 def status(lab_id: str):
     _lab(lab_id)
-    return {"lab": lab_id, "solved": is_solved(lab_id)}
+    return {"lab": lab_id, "solved": is_solved(lab_id), "blocked": is_blocked(lab_id)}
 
 
 @app.get("/{lab_id}/source")

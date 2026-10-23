@@ -15,7 +15,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request, Response, UploadFile
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "file-upload"
 SOURCE_FILE = Path(__file__)
@@ -60,15 +60,20 @@ def fixed_store(store, filename, content_type, data):
 
 
 @router.post("/{mode}/upload", status_code=201)
-async def upload(mode: Mode, file: UploadFile):
+async def upload(mode: Mode, file: UploadFile, request: Request):
     data = await file.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
         raise HTTPException(413, f"File too large (max {MAX_BYTES} bytes)")
     store = _files[mode]
     with _lock:
-        saved = (vulnerable_store if mode == "vulnerable" else fixed_store)(
-            store, file.filename or "upload", file.content_type or "application/octet-stream", data
-        )
+        try:
+            saved = (vulnerable_store if mode == "vulnerable" else fixed_store)(
+                store, file.filename or "upload", file.content_type or "application/octet-stream", data
+            )
+        except HTTPException as exc:
+            if mode == "fixed" and exc.status_code == 415:
+                mark_blocked(LAB_ID, request)  # a non-image or disguised file was refused
+            raise
         while len(store) > MAX_FILES:
             store.pop(next(iter(store)))
     return {"filename": saved, "size": len(data), "url": f"/{LAB_ID}/{mode}/uploads/{saved}"}

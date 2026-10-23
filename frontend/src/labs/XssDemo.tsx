@@ -56,7 +56,7 @@ export function XssDemo({ mode, onActivity }: DemoProps) {
         </div>
         <p className="text-xs text-zinc-500">{t('xss.note')}</p>
       </Card>
-      <SandboxPreview src={src} labId="xss" onExecuted={onActivity} />
+      <SandboxPreview src={src} labId="xss" onActivity={onActivity} />
     </div>
   )
 }

@@ -13,6 +13,7 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS lab_progress (
     lab_id TEXT PRIMARY KEY,
     exploited_at TEXT,
+    defended_at TEXT,
     fix_verified_at TEXT,
     completed_at TEXT,
     verification_runs INTEGER NOT NULL DEFAULT 0,
@@ -46,6 +47,16 @@ class Store:
             Path(path).parent.mkdir(parents=True, exist_ok=True)
         with self._tx() as db:
             db.executescript(SCHEMA)
+            self._migrate(db)
+
+    @staticmethod
+    def _migrate(db: sqlite3.Connection) -> None:
+        columns = {r["name"] for r in db.execute("PRAGMA table_info(lab_progress)")}
+        if "defended_at" not in columns:
+            # v1.0.x completed a lab without the learner ever trying the fixed mode. That step is
+            # now required, so completions recorded under the old rule are withdrawn.
+            db.execute("ALTER TABLE lab_progress ADD COLUMN defended_at TEXT")
+            db.execute("UPDATE lab_progress SET completed_at = NULL")
 
     @contextmanager
     def _tx(self) -> Iterator[sqlite3.Connection]:
@@ -68,7 +79,7 @@ class Store:
     @staticmethod
     def _maybe_complete(db: sqlite3.Connection, lab_id: str) -> bool:
         row = db.execute("SELECT * FROM lab_progress WHERE lab_id = ?", (lab_id,)).fetchone()
-        if row["completed_at"] or not (row["exploited_at"] and row["fix_verified_at"]):
+        if row["completed_at"] or not (row["exploited_at"] and row["defended_at"] and row["fix_verified_at"]):
             return False
         db.execute("UPDATE lab_progress SET completed_at = ? WHERE lab_id = ?", (_now(), lab_id))
         Store._event(db, lab_id, "completed")
@@ -94,6 +105,7 @@ class Store:
         return {
             "status": "completed" if completed else "vulnerability_found" if exploited else "not_started",
             "exploited": exploited,
+            "defended": bool(row.get("defended_at")),
             "fix_verified": bool(row.get("fix_verified_at")),
             "completed": completed,
             "hints_used": hints_used,
@@ -125,6 +137,20 @@ class Store:
             )
             if cursor.rowcount:
                 self._event(db, lab_id, "hint_revealed", {"level": level})
+
+    def mark_defended(self, lab_id: str) -> bool:
+        """Record that the learner repeated the attack and the fixed mode stopped it. True if new."""
+        with self._tx() as db:
+            self._ensure(db, lab_id)
+            cursor = db.execute(
+                "UPDATE lab_progress SET defended_at = ? WHERE lab_id = ? AND defended_at IS NULL",
+                (_now(), lab_id),
+            )
+            if not cursor.rowcount:
+                return False
+            self._event(db, lab_id, "defense_observed")
+            self._maybe_complete(db, lab_id)
+            return True
 
     def mark_exploited(self, lab_id: str) -> bool:
         """Record that the learner exploited the vulnerable mode. True if newly recorded."""

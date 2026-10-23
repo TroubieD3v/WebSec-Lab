@@ -14,7 +14,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from common import Mode, mark_solved
+from common import Mode, mark_blocked, mark_solved
 
 LAB_ID = "race-condition"
 SOURCE_FILE = Path(__file__)
@@ -24,6 +24,8 @@ router = APIRouter(prefix=f"/{LAB_ID}", tags=[LAB_ID])
 COUPON_CODE = "WELCOME10"
 COUPON_VALUE = 10
 DB_LATENCY = 0.05  # simulated database round trip: the race window
+BURST_WINDOW = 1.0  # seconds
+BURST_REJECTIONS = 3  # refusals inside the window that count as a parallel attack (not a double click)
 
 
 class State:
@@ -32,6 +34,7 @@ class State:
         self.balance = 0
         self.redeemed: set[str] = set()
         self.redemptions = 0  # successful redemptions, for the UI and challenge detection
+        self.rejections: list[float] = []  # recent refusals in fixed mode, to recognise a parallel burst
 
 
 STATE: dict[str, State] = {"vulnerable": State(), "fixed": State()}
@@ -79,7 +82,15 @@ def redeem(mode: Mode, body: RedeemBody, request: Request):
     if body.code != COUPON_CODE:
         raise HTTPException(404, "Unknown coupon")
     state = STATE[mode]
-    (vulnerable_redeem if mode == "vulnerable" else fixed_redeem)(state, body.code)
+    try:
+        (vulnerable_redeem if mode == "vulnerable" else fixed_redeem)(state, body.code)
+    except HTTPException as exc:
+        if mode == "fixed" and exc.status_code == 409:
+            now = time.monotonic()
+            state.rejections = [t for t in state.rejections if now - t < BURST_WINDOW] + [now]
+            if len(state.rejections) >= BURST_REJECTIONS:
+                mark_blocked(LAB_ID, request)  # many simultaneous attempts, and still only one won
+        raise
     if mode == "vulnerable" and state.redemptions > 1:
         mark_solved(LAB_ID, request)
     return {"balance": state.balance, "redemptions": state.redemptions}

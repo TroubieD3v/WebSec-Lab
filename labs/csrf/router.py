@@ -20,7 +20,7 @@ import httpx
 from fastapi import APIRouter, Cookie, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from common import VERIFIER_HEADER, Mode, mark_solved
+from common import VERIFIER_HEADER, Mode, mark_blocked, mark_solved
 
 LAB_ID = "csrf"
 SOURCE_FILE = Path(__file__)
@@ -173,6 +173,8 @@ async def visit_attacker_page(mode: Mode, form: TransferForm, request: Request):
     response = await _browser(request, mode, "POST", "transfer", headers=headers, data={"to": form.to, "amount": form.amount})
     if mode == "vulnerable" and response.status_code == 200:
         mark_solved(LAB_ID, request)  # a forged request moved Alice's money
+    if mode == "fixed" and response.status_code == 403:
+        mark_blocked(LAB_ID, request)  # the bank refused the forged request
     return _snapshot(mode, response)
 
 

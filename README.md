@@ -43,8 +43,9 @@ Each lab provides:
 3. **Attack Playground**: raw HTTP requests against the lab API, with presets and "copy as curl".
 4. **Code Diff**: vulnerable vs. fixed source, taken from the code that actually runs.
 5. **Hints**: three progressive hints, tracked in your progress.
-6. **Automatic Verification**: reference attacks against both modes; a lab completes only when the checks pass
-   **and** you exploited the vulnerable mode yourself.
+6. **Automatic Verification**: reference attacks against both modes.
+   A lab completes only after **you** (1) exploit the vulnerable mode, (2) send the same attack to the fixed mode and
+   watch it get blocked, and (3) run the verification. Each step is detected by the server, not ticked by hand.
 7. **Progress tracking**: status per lab, achievements, activity history.
 
 The interface is available in **English and Russian** (switch in the header).
@@ -128,7 +129,8 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](
 | v0.5.0 | Stored XSS, Broken Access Control, Path Traversal, Security Misconfiguration |
 | v1.0.0 | All twelve labs, documentation, hardened Docker setup |
 | v1.0.1 | Fixed dead reference links; link checker |
-| **v1.0.2** | **Configurable dashboard port; Docker stack verified end to end** |
+| v1.0.2 | Configurable dashboard port; Docker stack verified end to end |
+| **v1.1.0** | **A lab now requires watching the fix block your own attack; mobile layout fixes** |
 
 ## License
 

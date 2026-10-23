@@ -19,6 +19,7 @@ test.describe('Stored XSS', () => {
     await expect(frame.locator('li')).toContainText('<img src=x onerror=alert(1)>')
     await expect(frame.locator('img')).toHaveCount(0)
     await page.waitForTimeout(800)
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
     await expect(page.getByTestId('xss-executed')).toHaveCount(0)
   })
 
@@ -69,6 +70,7 @@ test.describe('Broken Access Control', () => {
     await expect(page.getByTestId('bac-status')).toHaveText('400')
     await expect(page.getByTestId('bac-escalated')).toHaveCount(0)
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 
   test('a real admin can use the admin panel in both modes', async ({ page }) => {
@@ -81,6 +83,7 @@ test.describe('Broken Access Control', () => {
       await expect(page.getByTestId('bac-leak')).toHaveCount(0)
     }
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'false')
   })
 })
 
@@ -115,6 +118,7 @@ test.describe('Security Misconfiguration', () => {
     await page.getByTestId('mis-ping').click()
     await expect(page.getByTestId('mis-secure')).toBeVisible()
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 })
 
@@ -150,19 +154,26 @@ test.describe('Path Traversal', () => {
     await page.getByTestId('path-open').click()
     await expect(page.getByTestId('path-status')).toHaveText('200')
     await expect(page.getByTestId('step-exploit')).toHaveAttribute('data-done', 'false')
+    await expect(page.getByTestId('step-defend')).toHaveAttribute('data-done', 'true')
   })
 })
 
 test('every new lab completes end-to-end through the verification tab', async ({ page, request }) => {
-  const exploits: Record<string, () => Promise<unknown>> = {
-    'path-traversal': () => request.get('/api/labs/path-traversal/vulnerable/files', { params: { name: '../../config/app.env' } }),
-    'security-misconfiguration': () => request.get('/api/labs/security-misconfiguration/vulnerable/debug/config'),
-    'broken-access-control': () =>
-      request.get('/api/labs/broken-access-control/vulnerable/admin/users', { headers: { Authorization: 'Bearer alice-demo-token' } }),
-    'stored-xss': () => request.get('/api/labs/stored-xss/vulnerable/beacon'),
+  const exploits: Record<string, (mode: string) => Promise<unknown>> = {
+    'path-traversal': (mode) => request.get(`/api/labs/path-traversal/${mode}/files`, { params: { name: '../../config/app.env' } }),
+    'security-misconfiguration': (mode) => request.get(`/api/labs/security-misconfiguration/${mode}/debug/config`),
+    'broken-access-control': (mode) =>
+      request.get(`/api/labs/broken-access-control/${mode}/admin/users`, { headers: { Authorization: 'Bearer alice-demo-token' } }),
+    'stored-xss': async (mode) => {
+      if (mode === 'vulnerable') return request.get('/api/labs/stored-xss/vulnerable/beacon')
+      await request.post('/api/labs/stored-xss/fixed/comments', { data: { author: 'Eve', text: '<b>x</b>' } })
+      return request.get('http://127.0.0.1:8081/stored-xss/fixed/page')
+    },
   }
-  for (const [lab, exploit] of Object.entries(exploits)) {
-    await exploit()
+  // The same attack in both modes: it succeeds in vulnerable mode and is blocked in fixed mode.
+  for (const [lab, attack] of Object.entries(exploits)) {
+    await attack('vulnerable')
+    await attack('fixed')
     await page.goto(`/labs/${lab}`)
     await page.getByTestId('tab-verify').click()
     await page.getByTestId('verify-run').click()

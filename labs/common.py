@@ -22,7 +22,8 @@ Mode = Literal["vulnerable", "fixed"]
 VERIFIER_HEADER = "x-websec-verifier"
 
 _lock = threading.Lock()
-_solved: set[str] = set()
+_solved: set[str] = set()  # the learner's attack succeeded against the vulnerable mode
+_blocked: set[str] = set()  # the learner repeated the attack and the fixed mode stopped it
 
 
 def mark_solved(lab_id: str, request: Request) -> None:
@@ -32,14 +33,27 @@ def mark_solved(lab_id: str, request: Request) -> None:
         _solved.add(lab_id)
 
 
+def mark_blocked(lab_id: str, request: Request) -> None:
+    if request.headers.get(VERIFIER_HEADER):
+        return
+    with _lock:
+        _blocked.add(lab_id)
+
+
 def is_solved(lab_id: str) -> bool:
     with _lock:
         return lab_id in _solved
 
 
+def is_blocked(lab_id: str) -> bool:
+    with _lock:
+        return lab_id in _blocked
+
+
 def clear_solved() -> None:
     with _lock:
         _solved.clear()
+        _blocked.clear()
 
 
 _REGION = r"^[ \t]*# region {name}\n(.*?)^[ \t]*# endregion\b"

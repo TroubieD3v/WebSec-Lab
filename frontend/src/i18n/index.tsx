@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { en, type Dict, type Key } from './en'
 import { ru } from './ru'
 
@@ -23,9 +23,13 @@ const Ctx = createContext<I18n | null>(null)
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(initialLang)
 
+  // Keep <html lang> in sync from the first render (screen readers, hyphenation, spell checking).
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   const setLang = useCallback((next: Lang) => {
     localStorage.setItem(STORAGE_KEY, next)
-    document.documentElement.lang = next
     setLangState(next)
   }, [])
 

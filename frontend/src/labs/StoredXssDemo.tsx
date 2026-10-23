@@ -85,7 +85,7 @@ export function StoredXssDemo({ mode, onActivity }: DemoProps) {
         </div>
         <p className="text-xs text-zinc-500">{t('xss.note')}</p>
       </Card>
-      <SandboxPreview src={src} labId={LAB} onExecuted={onActivity} />
+      <SandboxPreview src={src} labId={LAB} onActivity={onActivity} />
     </div>
   )
 }
