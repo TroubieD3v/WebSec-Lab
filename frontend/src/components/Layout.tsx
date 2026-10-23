@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { ShieldCheck, TriangleAlert } from 'lucide-react'
 import { useI18n, type Lang } from '../i18n'
-import { Badge, cn } from './ui'
+import { cn } from './ui'
 
 function LangSwitch() {
   const { lang, setLang } = useI18n()
@@ -33,7 +33,7 @@ export function Layout() {
     )
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-20 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-zinc-900 bg-zinc-950/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6">
           <NavLink to="/" className="flex shrink-0 items-center gap-2.5" aria-label={t('app.name')}>
             <ShieldCheck className="size-6 text-emerald-400" aria-hidden />
@@ -52,10 +52,8 @@ export function Layout() {
           </nav>
           <div className="ml-auto flex items-center gap-3">
             {/* Wrapped: Badge's own inline-flex would override a `hidden` class on the badge itself. */}
-            <span className="hidden md:block">
-              <Badge tone="green">
-                <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> {t('badge.local')}
-              </Badge>
+            <span className="hidden items-center gap-2 text-xs text-zinc-500 md:flex">
+              <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> {t('badge.local')}
             </span>
             <LangSwitch />
           </div>

@@ -20,8 +20,14 @@ function CheckTable({ title, checks }: { title: string; checks: Check[] }) {
     <Card className="overflow-hidden">
       <h3 className="border-b border-zinc-800 px-4 py-2.5 text-sm font-semibold">{title}</h3>
       <ul className="divide-y divide-zinc-800/80">
-        {checks.map((check) => (
-          <li key={`${check.mode}-${check.id}`} className="flex gap-3 px-4 py-3" data-testid="check-row" data-passed={check.passed}>
+        {checks.map((check, index) => (
+          <li
+            key={`${check.mode}-${check.id}`}
+            className="rise-in flex gap-3 px-4 py-3"
+            style={{ animationDelay: `${index * 55}ms` }}
+            data-testid="check-row"
+            data-passed={check.passed}
+          >
             {check.passed ? (
               <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400" aria-label="passed" />
             ) : (

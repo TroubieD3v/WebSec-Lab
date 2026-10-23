@@ -130,7 +130,8 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](
 | v1.0.0 | All twelve labs, documentation, hardened Docker setup |
 | v1.0.1 | Fixed dead reference links; link checker |
 | v1.0.2 | Configurable dashboard port; Docker stack verified end to end |
-| **v1.1.0** | **A lab now requires watching the fix block your own attack; mobile layout fixes** |
+| v1.1.0 | A lab now requires watching the fix block your own attack; mobile layout fixes |
+| **v1.2.0** | **Minimal dark design with mode-driven colour and motion** |
 
 ## License
 

@@ -17,10 +17,12 @@ await page.getByTestId('sqli-input').fill("' OR 1=1 --")
 await page.getByTestId('sqli-submit').click()
 await page.getByTestId('sqli-results').waitFor()
 await page.getByTestId('step-exploit').and(page.locator('[data-done=true]')).waitFor()
+  await page.waitForTimeout(900)
 await page.screenshot({ path: `${out}lab-sql-injection.png` })
 
 await page.getByTestId('tab-code').click()
 await page.getByTestId('code-diff').waitFor()
+  await page.waitForTimeout(600) // let the tab fade and the step confirmation finish
 await page.screenshot({ path: `${out}code-diff.png` })
 
 await page.request.post(`${base}/api/progress/reset`)

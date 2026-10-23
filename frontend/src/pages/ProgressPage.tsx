@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Award, Lock } from 'lucide-react'
-import { Badge, Button, Card, ErrorBox, Spinner, cn } from '../components/ui'
+import { Button, ErrorBox, Spinner, cn } from '../components/ui'
 import { useI18n } from '../i18n'
 import type { Key } from '../i18n/en'
 import { api, type ProgressData } from '../services/api'
@@ -28,56 +28,76 @@ export function ProgressPage() {
   const summary = [
     { label: t('dash.stat.completed'), value: `${data.completed} / ${data.labs_available}` },
     { label: t('progress.stat.exploited'), value: data.exploited },
+    { label: t('progress.stat.defended'), value: data.defended },
     { label: t('dash.stat.checks'), value: `${data.checks_passed} / ${data.checks_run}` },
     { label: t('progress.stat.hints'), value: data.hints_used },
   ]
+  // Event dots reuse the step colours: amber = you broke it, glacier = the fix held.
+  const dot: Record<string, string> = {
+    exploit_detected: 'bg-amber-400',
+    defense_observed: 'bg-emerald-400',
+    fix_verified: 'bg-zinc-100',
+    completed: 'bg-emerald-300',
+  }
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('progress.title')}</h1>
-        <Button variant="danger" onClick={reset} data-testid="reset-progress">
+    <div className="space-y-12">
+      <div className="flex flex-wrap items-end justify-between gap-4 pt-4">
+        <h1 className="text-4xl font-semibold tracking-[-0.03em]">{t('progress.title')}</h1>
+        <Button variant="ghost" onClick={reset} data-testid="reset-progress">
           {t('progress.reset')}
         </Button>
       </div>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
         {summary.map((item) => (
-          <Card key={item.label} className="p-4">
-            <p className="text-xs text-zinc-500">{item.label}</p>
-            <p className="text-2xl font-semibold">{item.value}</p>
-          </Card>
+          <div key={item.label}>
+            <dt className="text-sm text-zinc-500">{item.label}</dt>
+            <dd className="mt-1 text-2xl font-semibold tabular-nums">{item.value}</dd>
+          </div>
         ))}
-      </section>
+      </dl>
 
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="text-lg font-semibold">{t('progress.achievements')}</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
           {data.achievements.map((a) => (
-            <Card key={a.id} className={cn('p-4', !a.unlocked && 'opacity-50')} data-testid={`achievement-${a.id}`} data-unlocked={a.unlocked}>
-              {a.unlocked ? <Award className="mb-2 size-5 text-amber-300" aria-hidden /> : <Lock className="mb-2 size-5 text-zinc-500" aria-hidden />}
-              <p className="text-sm font-medium">{a.title}</p>
-              <p className="text-xs text-zinc-500">{a.description}</p>
-            </Card>
+            <li
+              key={a.id}
+              className={cn('flex gap-3 transition-opacity', !a.unlocked && 'opacity-45')}
+              data-testid={`achievement-${a.id}`}
+              data-unlocked={a.unlocked}
+            >
+              {a.unlocked ? (
+                <Award className="mt-0.5 size-5 shrink-0 text-emerald-300" aria-hidden />
+              ) : (
+                <Lock className="mt-0.5 size-5 shrink-0 text-zinc-600" aria-hidden />
+              )}
+              <div>
+                <p className="font-medium">{a.title}</p>
+                <p className="text-sm text-zinc-500">{a.description}</p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="text-lg font-semibold">{t('progress.history')}</h2>
         {data.history.length === 0 ? (
           <p className="text-sm text-zinc-500">{t('progress.empty')}</p>
         ) : (
-          <Card className="divide-y divide-zinc-800/80">
+          <ol className="divide-y divide-zinc-900">
             {data.history.map((event, i) => (
-              <div key={i} className="flex flex-wrap items-center gap-3 px-4 py-2.5 text-sm">
-                <Badge>{event.lab_title}</Badge>
-                <span>{t(`event.${event.kind}` as Key)}</span>
-                <time className="ml-auto text-xs text-zinc-500" dateTime={event.at}>
+              <li key={i} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm">
+                <span className={cn('size-2 shrink-0 rounded-full', dot[event.kind] ?? 'bg-zinc-600')} aria-hidden />
+                <span className="text-zinc-200">{t(`event.${event.kind}` as Key)}</span>
+                <span className="text-zinc-500">{event.lab_title}</span>
+                <time className="ml-auto text-xs text-zinc-600 tabular-nums" dateTime={event.at}>
                   {new Date(event.at).toLocaleString(lang)}
                 </time>
-              </div>
+              </li>
             ))}
-          </Card>
+          </ol>
         )}
       </section>
     </div>

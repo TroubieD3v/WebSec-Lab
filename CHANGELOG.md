@@ -2,6 +2,25 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.2.0]
+
+### Changed
+- New visual design: minimal, dark, built on two colours that mean something. Amber is the vulnerable mode, glacier
+  blue is the fixed mode; switching modes shifts the colour of the whole screen and sweeps a thin line across the lab
+  header. Onest (with full Cyrillic) for text and JetBrains Mono for code, both bundled so the lab works offline.
+- The dashboard is a list grouped by OWASP category; each lab shows three step markers (exploited, fix blocked the
+  attack, verified) that fill in on load.
+- Motion answers the learner's actions: a progress step pulses when the server confirms it, verification results
+  arrive one by one, tabs fade. `prefers-reduced-motion` turns all of it off.
+
+### Fixed
+- Code Diff: a long line in one column ran over the other column; long lines now wrap inside their own column.
+- Long outcome messages in the lab widgets no longer run past the card edge on phones.
+
+### Added
+- End-to-end layout tests: no sideways scrolling at 375 px on any page or lab tab, no Code Diff line leaving its column,
+  the mode colour and the page language are applied.
+
 ## [1.1.0]
 
 ### Changed

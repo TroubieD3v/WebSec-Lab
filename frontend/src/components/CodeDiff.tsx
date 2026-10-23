@@ -13,7 +13,7 @@ function Cell({ line }: { line: CodeRow['left'] | CodeRow['right'] }) {
   return (
     <>
       <td className={cn('w-10 select-none px-2 text-right text-zinc-600', cellTone[line.kind])}>{line.n}</td>
-      <td className={cn('px-2 whitespace-pre', cellTone[line.kind], line.kind === 'del' && 'text-rose-200', line.kind === 'add' && 'text-emerald-200')}>
+      <td className={cn('px-2 whitespace-pre-wrap [overflow-wrap:anywhere]', cellTone[line.kind], line.kind === 'del' && 'text-rose-200', line.kind === 'add' && 'text-emerald-200')}>
         <span className="mr-2 select-none text-zinc-600">{marker[line.kind]}</span>
         {line.text || ' '}
       </td>

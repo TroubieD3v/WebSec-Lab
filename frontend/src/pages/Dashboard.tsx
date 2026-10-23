@@ -1,53 +1,64 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, CheckCircle2, FlaskConical, ListChecks, ServerOff } from 'lucide-react'
-import { Badge, Button, Card, DifficultyBadge, ErrorBox, Inline, Spinner, StatusBadge, cn } from '../components/ui'
+import { ServerOff } from 'lucide-react'
+import { ErrorBox, Inline, Spinner, cn } from '../components/ui'
 import { useI18n } from '../i18n'
-import { api, type LabSummary, type ProgressData } from '../services/api'
+import { api, type LabProgress, type LabSummary, type ProgressData } from '../services/api'
 
-function Stat({ icon: Icon, label, value, hint, testid }: { icon: typeof FlaskConical; label: string; value: string; hint: string; testid: string }) {
+type PipKind = 'exploit' | 'defend' | 'verify'
+const PIP_FILL: Record<PipKind, string> = {
+  exploit: 'bg-amber-400',
+  defend: 'bg-emerald-400',
+  verify: 'bg-zinc-100',
+}
+
+function Pip({ kind, done, delay }: { kind: PipKind; done: boolean; delay: number }) {
   return (
-    <Card className="flex items-start gap-4 p-5">
-      <div className="rounded-lg bg-zinc-800 p-2.5 text-emerald-400">
-        <Icon className="size-5" aria-hidden />
-      </div>
-      <div>
-        <p className="text-xs text-zinc-500">{label}</p>
-        <p className="text-2xl font-semibold tracking-tight" data-testid={testid}>
-          {value}
-        </p>
-        <p className="text-xs text-zinc-500">{hint}</p>
-      </div>
-    </Card>
+    <span className="grid size-2.5 place-items-center rounded-full border border-zinc-700" aria-hidden>
+      {done && (
+        <span className={cn('pip-fill size-2.5 rounded-full', PIP_FILL[kind])} style={{ animationDelay: `${delay}ms` }} />
+      )}
+    </span>
   )
 }
 
-function LabCard({ lab }: { lab: LabSummary }) {
+function Pips({ progress, delay }: { progress: LabProgress; delay: number }) {
   const { t } = useI18n()
-  const { status } = lab.progress
+  const steps: [PipKind, boolean][] = [
+    ['exploit', progress.exploited],
+    ['defend', progress.defended],
+    ['verify', progress.fix_verified],
+  ]
+  const label = steps.map(([kind, done]) => `${t(`pip.${kind}`)}: ${done ? t('pip.yes') : t('pip.no')}`).join('; ')
   return (
-    <Card
-      className={cn('flex flex-col gap-3 p-5 transition-colors', lab.available ? 'hover:border-zinc-600' : 'opacity-60')}
-      data-testid={`lab-card-${lab.id}`}
-    >
-      <div className="flex flex-wrap items-center gap-2">
-        {lab.owasp && <Badge tone="violet">OWASP {lab.owasp}</Badge>}
-        <DifficultyBadge difficulty={lab.difficulty} />
-        <span className="ml-auto">{lab.available ? <StatusBadge status={status} /> : <Badge>{t('lab.soon')}</Badge>}</span>
-      </div>
-      <div className="flex-1">
-        <h3 className="font-semibold tracking-tight">{lab.title}</h3>
-        <p className="mt-1 text-sm text-zinc-400">{lab.summary}</p>
-      </div>
-      {lab.available && (
-        <Link to={`/labs/${lab.id}`} className="self-start" data-testid={`open-${lab.id}`}>
-          <Button variant={status === 'not_started' ? 'primary' : 'secondary'} tabIndex={-1}>
-            {status === 'completed' ? t('lab.review') : status === 'not_started' ? t('lab.open') : t('lab.continue')}
-            <ArrowRight className="size-4" aria-hidden />
-          </Button>
-        </Link>
-      )}
-    </Card>
+    <span className="flex items-center gap-1.5" role="img" aria-label={label}>
+      {steps.map(([kind, done], i) => (
+        <Pip key={kind} kind={kind} done={done} delay={delay + i * 90} />
+      ))}
+    </span>
+  )
+}
+
+function LabRow({ lab, delay }: { lab: LabSummary; delay: number }) {
+  const { t } = useI18n()
+  return (
+    <li data-testid={`lab-card-${lab.id}`}>
+      <Link
+        to={`/labs/${lab.id}`}
+        data-testid={`open-${lab.id}`}
+        className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-6 gap-y-1 rounded-lg px-3 py-3.5 transition-colors duration-200 hover:bg-zinc-900 sm:grid-cols-[minmax(0,1fr)_6rem_auto] sm:px-4"
+      >
+        <span className="min-w-0">
+          <span className="flex items-center gap-2 font-medium text-zinc-100">
+            {lab.title}
+            {lab.progress.completed && <span className="text-xs font-normal text-emerald-300">{t('status.completed')}</span>}
+          </span>
+          <span className="mt-0.5 block truncate text-sm text-zinc-500 group-hover:text-zinc-400">{lab.summary}</span>
+        </span>
+        <span className="hidden text-sm text-zinc-500 sm:block">{t(`difficulty.${lab.difficulty}`)}</span>
+        <Pips progress={lab.progress} delay={delay} />
+      </Link>
+    </li>
   )
 }
 
@@ -74,17 +85,43 @@ export function Dashboard() {
   if (error) return <ErrorBox message={error} onRetry={load} />
   if (!labs || !stats) return <Spinner />
 
-  const available = labs.filter((l) => l.available)
-  const planned = labs.filter((l) => !l.available)
+  // Group by OWASP category, in category order.
+  const groups = new Map<string, { name: string; labs: LabSummary[] }>()
+  for (const lab of [...labs].sort((a, b) => a.owasp.localeCompare(b.owasp))) {
+    const group = groups.get(lab.owasp) ?? { name: lab.owasp_name, labs: [] }
+    group.labs.push(lab)
+    groups.set(lab.owasp, group)
+  }
+  let order = 0 // drives the staggered fill of earned pips
+
   return (
-    <div className="space-y-10">
-      <section className="max-w-3xl space-y-3">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{t('dash.title')}</h1>
-        <p className="text-zinc-400">{t('dash.subtitle')}</p>
+    <div className="space-y-14">
+      <section className="max-w-2xl space-y-5 pt-4">
+        <h1 className="text-4xl font-semibold tracking-[-0.03em] text-balance sm:text-5xl">{t('dash.title')}</h1>
+        <p className="text-lg leading-relaxed text-zinc-400">{t('dash.subtitle')}</p>
+        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-400" aria-label={t('dash.legend')}>
+          {(['exploit', 'defend', 'verify'] as PipKind[]).map((kind) => (
+            <li key={kind} className="flex items-center gap-2">
+              <span className={cn('size-2.5 rounded-full', PIP_FILL[kind])} aria-hidden />
+              {t(`pip.${kind}.long`)}
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-zinc-500">
+          {t('dash.completedOf.before')}
+          <span className="font-medium text-zinc-200 tabular-nums" data-testid="stat-completed">
+            {stats.completed}
+          </span>
+          {t('dash.completedOf.middle')}
+          <span className="font-medium text-zinc-200 tabular-nums" data-testid="stat-labs">
+            {stats.labs_available}
+          </span>
+          {t('dash.completedOf.after')}
+        </p>
       </section>
 
       {!online && (
-        <Card className="flex items-start gap-3 border-amber-500/30 bg-amber-500/5 p-4" role="alert">
+        <div className="flex max-w-2xl items-start gap-3 rounded-xl border border-amber-400/25 bg-amber-400/5 p-4" role="alert">
           <ServerOff className="mt-0.5 size-5 shrink-0 text-amber-300" aria-hidden />
           <div>
             <p className="text-sm font-medium text-amber-200">{t('offline.title')}</p>
@@ -92,52 +129,25 @@ export function Dashboard() {
               <Inline text={t('offline.body')} />
             </p>
           </div>
-        </Card>
-      )}
-
-      <section className="grid gap-4 sm:grid-cols-3">
-        <Stat
-          icon={FlaskConical}
-          label={t('dash.stat.labs')}
-          value={`${stats.labs_available}`}
-          hint={t('dash.stat.labsHint', { n: new Set(available.map((l) => l.owasp)).size })}
-          testid="stat-labs"
-        />
-        <Stat
-          icon={CheckCircle2}
-          label={t('dash.stat.completed')}
-          value={`${stats.completed}`}
-          hint={t('dash.stat.completedHint', { exploited: stats.exploited })}
-          testid="stat-completed"
-        />
-        <Stat
-          icon={ListChecks}
-          label={t('dash.stat.checks')}
-          value={`${stats.checks_passed}`}
-          hint={t('dash.stat.checksHint', { run: stats.checks_run })}
-          testid="stat-checks"
-        />
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">{t('dash.available')}</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {available.map((lab) => (
-            <LabCard key={lab.id} lab={lab} />
-          ))}
         </div>
-      </section>
-
-      {planned.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-zinc-300">{t('dash.roadmap')}</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {planned.map((lab) => (
-              <LabCard key={lab.id} lab={lab} />
-            ))}
-          </div>
-        </section>
       )}
+
+      <div className="space-y-10">
+        {[...groups.entries()].map(([code, group]) => (
+          <section key={code} aria-labelledby={`cat-${code}`}>
+            <h2 id={`cat-${code}`} className="mb-2 flex items-baseline gap-3 px-3 text-sm sm:px-4">
+              <span className="text-zinc-500 tabular-nums">{code}</span>
+              <span className="font-medium text-zinc-300">{group.name}</span>
+            </h2>
+            <ul className="divide-y divide-zinc-900">
+              {group.labs.map((lab) => {
+                const delay = 250 + order++ * 70
+                return <LabRow key={lab.id} lab={lab} delay={delay} />
+              })}
+            </ul>
+          </section>
+        ))}
+      </div>
     </div>
   )
 }

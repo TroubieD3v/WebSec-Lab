@@ -9,24 +9,26 @@ export function cn(...parts: (string | false | null | undefined)[]): string {
 
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   // min-w-0: as a grid/flex item a card must be allowed to shrink below its widest line (code blocks scroll instead).
-  return <div className={cn('min-w-0 rounded-xl border border-zinc-800 bg-zinc-900/60 backdrop-blur', className)} {...props} />
+  return <div className={cn('min-w-0 rounded-xl border border-zinc-800/80 bg-zinc-900/70', className)} {...props} />
 }
 
 type Tone = 'neutral' | 'green' | 'red' | 'amber' | 'blue' | 'violet'
 const tones: Record<Tone, string> = {
-  neutral: 'border-zinc-700 bg-zinc-800/60 text-zinc-300',
-  green: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
-  red: 'border-rose-500/30 bg-rose-500/10 text-rose-300',
-  amber: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-  blue: 'border-sky-500/30 bg-sky-500/10 text-sky-300',
-  violet: 'border-violet-500/30 bg-violet-500/10 text-violet-300',
+  neutral: 'border-zinc-700/70 bg-zinc-800/50 text-zinc-300',
+  green: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200',
+  red: 'border-rose-400/25 bg-rose-400/10 text-rose-200',
+  amber: 'border-amber-400/25 bg-amber-400/10 text-amber-200',
+  // Category tags stay quiet: colour is reserved for the two modes and for outcomes.
+  blue: 'border-zinc-700/70 bg-transparent text-zinc-400',
+  violet: 'border-zinc-700/70 bg-transparent text-zinc-400',
 }
 
 export function Badge({ tone = 'neutral', className, ...props }: HTMLAttributes<HTMLSpanElement> & { tone?: Tone }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium whitespace-nowrap',
+        // Long outcome messages may wrap on narrow screens instead of running past the card edge.
+        'inline-flex max-w-full items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium',
         tones[tone],
         className,
       )}
@@ -37,10 +39,10 @@ export function Badge({ tone = 'neutral', className, ...props }: HTMLAttributes<
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 const variants: Record<Variant, string> = {
-  primary: 'bg-emerald-500 text-zinc-950 hover:bg-emerald-400 disabled:hover:bg-emerald-500',
-  secondary: 'border border-zinc-700 bg-zinc-800 text-zinc-100 hover:bg-zinc-700 disabled:hover:bg-zinc-800',
-  ghost: 'text-zinc-300 hover:bg-zinc-800',
-  danger: 'border border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20',
+  primary: 'bg-emerald-400 text-zinc-950 hover:bg-emerald-300 disabled:hover:bg-emerald-400',
+  secondary: 'border border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:border-zinc-600 hover:bg-zinc-800 disabled:hover:bg-zinc-800/80',
+  ghost: 'text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100',
+  danger: 'border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/20',
 }
 
 export function Button({
@@ -54,7 +56,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100',
         variants[variant],
         className,
       )}
