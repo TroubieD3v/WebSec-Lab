@@ -21,7 +21,12 @@ jobs:
             found { print }
           ' CHANGELOG.md > release-notes.md
           test -s release-notes.md || { echo "No CHANGELOG entry for $version"; exit 1; }
-      - name: Create the GitHub release
+      - name: Create the GitHub release (or refresh it when the tag is re-pushed)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --title "WebSec Lab $GITHUB_REF_NAME" --notes-file release-notes.md
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --title "WebSec Lab $GITHUB_REF_NAME" --notes-file release-notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" --title "WebSec Lab $GITHUB_REF_NAME" --notes-file release-notes.md
+          fi
