@@ -1,0 +1,54 @@
+# WebSec Lab: dashboard on http://127.0.0.1:3000
+#
+# Isolation model
+#   edge      the only network with outbound access; just the nginx container joins it
+#   internal  no route to the outside world; the vulnerable `labs` service lives here
+# Nothing is published on 0.0.0.0, only on the loopback interface.
+name: websec-lab
+
+x-hardened: &hardened
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  restart: unless-stopped
+
+services:
+  frontend:
+    <<: *hardened
+    build: ./frontend
+    ports:
+      - "127.0.0.1:3000:3000"   # dashboard
+      - "127.0.0.1:8081:8081"   # isolated lab origin (XSS iframe only)
+    depends_on:
+      backend: { condition: service_healthy }
+      labs: { condition: service_healthy }
+    networks: [edge, internal]
+    tmpfs: [/tmp]
+    mem_limit: 128m
+    pids_limit: 64
+
+  backend:
+    <<: *hardened
+    build: ./backend
+    networks: [internal]
+    volumes: [progress:/data]
+    tmpfs: [/tmp]
+    mem_limit: 256m
+    pids_limit: 100
+
+  labs:
+    <<: *hardened
+    build: ./labs
+    networks: [internal]
+    tmpfs: [/tmp]
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 100
+
+networks:
+  edge: {}
+  internal:
+    internal: true
+
+volumes:
+  progress: {}
