@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { PlayCircle } from 'lucide-react'
 import { SandboxPreview } from '../components/SandboxPreview'
 import { Button, Card } from '../components/ui'
@@ -11,14 +11,13 @@ const PAYLOADS = ['<b>bold</b>', '<img src=x onerror=alert(1)>', '<script>alert(
 export function XssDemo({ mode, onActivity }: DemoProps) {
   const { t } = useI18n()
   const [query, setQuery] = useState('hello')
-  const [src, setSrc] = useState<string | null>(null)
-
-  // Switching mode invalidates the previous preview.
-  useEffect(() => setSrc(null), [mode])
+  // A preview belongs to the mode it was rendered in; switching mode hides it.
+  const [preview, setPreview] = useState<{ mode: string; url: string } | null>(null)
+  const src = preview && preview.mode === mode ? preview.url : null
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    setSrc(`${LABS_ORIGIN}/xss/${mode}/search?q=${encodeURIComponent(query)}&_=${Date.now()}`)
+    setPreview({ mode, url: `${LABS_ORIGIN}/xss/${mode}/search?q=${encodeURIComponent(query)}&_=${Date.now()}` })
   }
 
   return (
@@ -45,6 +44,7 @@ export function XssDemo({ mode, onActivity }: DemoProps) {
           <div className="flex flex-wrap gap-2">
             {PAYLOADS.map((payload) => (
               <button
+                type="button"
                 key={payload}
                 onClick={() => setQuery(payload)}
                 className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 font-mono text-xs text-zinc-200 hover:bg-zinc-700"

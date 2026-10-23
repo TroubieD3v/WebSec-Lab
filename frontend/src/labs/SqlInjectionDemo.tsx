@@ -80,6 +80,7 @@ export function SqlInjectionDemo({ mode, onActivity }: DemoProps) {
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {result.rows.map((row, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: UNION results may repeat ids; each response replaces the whole table
                   <tr key={i}>
                     <td className="py-1.5 pr-3 font-mono text-xs text-zinc-400">{row.id}</td>
                     <td className="py-1.5 pr-3">{row.name}</td>

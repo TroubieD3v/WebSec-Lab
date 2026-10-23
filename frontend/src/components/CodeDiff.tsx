@@ -32,8 +32,8 @@ function SideBySide({ rows }: { rows: CodeRow[] }) {
           <col />
         </colgroup>
         <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} className="align-top">
+          {rows.map((row) => (
+            <tr key={`${row.left?.n ?? '-'}:${row.right?.n ?? '-'}`} className="align-top">
               <Cell line={row.left} />
               <Cell line={row.right} />
             </tr>
@@ -62,7 +62,7 @@ export function CodeDiff({ labId }: { labId: string }) {
     setError(null)
     api.code(labId).then(setCode, (e: Error) => setError(e.message))
   }
-  useEffect(load, [labId]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(load, [labId])
 
   if (error) return <ErrorBox message={error} onRetry={load} />
   if (!code) return <Spinner />
@@ -78,6 +78,7 @@ export function CodeDiff({ labId }: { labId: string }) {
         <div className="inline-flex rounded-lg border border-zinc-800 bg-zinc-900/60 p-0.5" role="tablist">
           {tabs.map((tab) => (
             <button
+              type="button"
               key={tab.view}
               role="tab"
               aria-selected={view === tab.view}

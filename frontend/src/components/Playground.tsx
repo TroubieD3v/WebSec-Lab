@@ -48,9 +48,10 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
     setBody(preset.body ?? '')
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: load the first preset only when the lab changes, not on every render
   useEffect(() => {
     if (presets[0]) applyPreset(presets[0])
-  }, [labId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [labId])
 
   const send = async () => {
     setLoading(true)
@@ -91,6 +92,7 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
           <span className="text-xs text-zinc-500">{t('pg.presets')}:</span>
           {presets.map((preset) => (
             <button
+              type="button"
               key={preset.label}
               onClick={() => applyPreset(preset)}
               className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-700"

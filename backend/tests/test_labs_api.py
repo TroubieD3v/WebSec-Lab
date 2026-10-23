@@ -82,6 +82,6 @@ def test_every_lab_and_every_check_is_fully_translated(api):
         for level in range(1, ru["hint_count"] + 1):
             hint = api.post(f"/api/labs/{lab_id}/hints/{level}", params={"lang": "ru"}).json()["text"]
             assert cyrillic.search(hint), (lab_id, "hint", level)
-        assert all(cyrillic.search(p["label"]) or p["label"] == e["label"] for p, e in zip(ru["presets"], en["presets"]))
+        assert all(cyrillic.search(p["label"]) or p["label"] == e["label"] for p, e in zip(ru["presets"], en["presets"], strict=True))
         checks = api.post(f"/api/labs/{lab_id}/verify", params={"lang": "ru"}).json()["checks"]
         assert all(cyrillic.search(c["title"]) for c in checks), (lab_id, [c["title"] for c in checks if not cyrillic.search(c["title"])])

@@ -9,9 +9,6 @@ pages directly because they have to live on a separate origin.
 
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
-
 import access_control.router as access_control
 import authentication.router as authentication
 import csrf.router as csrf
@@ -24,6 +21,9 @@ import security_misconfig.router as security_misconfig
 import sql_injection.router as sql_injection
 import stored_xss.router as stored_xss
 import xss.router as xss
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+
 from common import clear_solved, is_blocked, is_solved, source_payload
 
 MODULES = {

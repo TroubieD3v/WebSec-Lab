@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Iterator
 from contextlib import closing, contextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS lab_progress (
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS events (
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 class Store:
@@ -123,7 +124,7 @@ class Store:
         with self._tx() as db:
             rows = db.execute("SELECT * FROM events ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
         return [
-            {"lab_id": r["lab_id"], "kind": r["kind"], "detail": json.loads(r["detail"]), "at": r["created_at"]}
+            {"id": r["id"], "lab_id": r["lab_id"], "kind": r["kind"], "detail": json.loads(r["detail"]), "at": r["created_at"]}
             for r in rows
         ]
 

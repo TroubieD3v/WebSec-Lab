@@ -47,6 +47,7 @@ const variants: Record<Variant, string> = {
 
 export function Button({
   variant = 'secondary',
+  type = 'button',
   className,
   loading,
   children,
@@ -55,6 +56,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; loading?: boolean }) {
   return (
     <button
+      type={type}
       className={cn(
         'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100',
         variants[variant],
@@ -92,18 +94,78 @@ export function DifficultyBadge({ difficulty }: { difficulty: 'easy' | 'medium' 
 
 /** Renders `backtick` spans as inline code. */
 export function Inline({ text }: { text: string }): ReactNode {
+  // Key each segment by its offset in the text: unique and stable for a given string.
+  let offset = 0
+  const segments = text
+    .split(/(`[^`]+`)/g)
+    .filter(Boolean)
+    .map((part) => {
+      const key = offset
+      offset += part.length
+      return { part, key }
+    })
   return (
     <>
-      {text.split(/(`[^`]+`)/g).map((part, i) =>
+      {segments.map(({ part, key }) =>
         part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
-          <code key={i} className="inline">
+          <code key={key} className="inline">
             {part.slice(1, -1)}
           </code>
         ) : (
-          <span key={i}>{part}</span>
+          <span key={key}>{part}</span>
         ),
       )}
     </>
+  )
+}
+
+interface RadioOption<T extends string> {
+  value: T
+  label: string
+  testId?: string
+}
+
+/** A small segmented radio group built on native inputs, so arrow keys and screen readers just work. */
+export function RadioPills<T extends string>({
+  name,
+  legend,
+  value,
+  options,
+  onChange,
+}: {
+  name: string
+  legend: string
+  value: T
+  options: RadioOption<T>[]
+  onChange: (value: T) => void
+}) {
+  return (
+    <fieldset>
+      <legend className="mb-1.5 text-xs text-zinc-400">{legend}</legend>
+      <div className="inline-flex rounded-lg border border-zinc-700 p-0.5">
+        {options.map((option) => (
+          <label
+            key={option.value}
+            data-testid={option.testId}
+            className={cn(
+              'cursor-pointer rounded-md px-4 py-1.5 text-sm font-medium transition-colors duration-200',
+              'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-emerald-400',
+              value === option.value ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-400 hover:text-zinc-100',
+            )}
+          >
+            <input
+              type="radio"
+              name={name}
+              value={option.value}
+              checked={value === option.value}
+              onChange={() => onChange(option.value)}
+              className="sr-only"
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   )
 }
 

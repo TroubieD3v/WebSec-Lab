@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge, Button, Card, CodeBlock, StatusChip, cn } from '../components/ui'
+import { Badge, Button, Card, CodeBlock, RadioPills, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson, type LabResponse } from '../services/api'
 import type { DemoProps } from './types'
@@ -40,24 +40,13 @@ export function IdorDemo({ mode, onActivity }: DemoProps) {
     <div className="grid gap-4 lg:grid-cols-2">
       <Card className="space-y-4 p-4">
         <div>
-          <span className="mb-1.5 block text-xs text-zinc-500">{t('idor.as')}</span>
-          <div className="inline-flex rounded-lg border border-zinc-700 p-0.5" role="radiogroup">
-            {(Object.keys(PERSONAS) as Persona[]).map((p) => (
-              <button
-                key={p}
-                role="radio"
-                aria-checked={persona === p}
-                onClick={() => setPersona(p)}
-                data-testid={`persona-${p}`}
-                className={cn(
-                  'cursor-pointer rounded-md px-4 py-1.5 text-sm font-medium',
-                  persona === p ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-400 hover:text-zinc-100',
-                )}
-              >
-                {PERSONAS[p].label}
-              </button>
-            ))}
-          </div>
+          <RadioPills
+            name="idor-persona"
+            legend={t('idor.as')}
+            value={persona}
+            onChange={setPersona}
+            options={(Object.keys(PERSONAS) as Persona[]).map((p) => ({ value: p, label: PERSONAS[p].label, testId: `persona-${p}` }))}
+          />
           <p className="mt-2 font-mono text-xs text-zinc-500">
             Authorization: Bearer {PERSONAS[persona].token}
           </p>

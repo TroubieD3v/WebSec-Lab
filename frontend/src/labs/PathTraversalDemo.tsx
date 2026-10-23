@@ -62,6 +62,7 @@ export function PathTraversalDemo({ mode, onActivity }: DemoProps) {
           <div className="flex flex-wrap gap-2">
             {DOCS.map((doc) => (
               <button
+                type="button"
                 key={doc}
                 onClick={() => setName(doc)}
                 className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 font-mono text-xs text-zinc-200 hover:bg-zinc-700"

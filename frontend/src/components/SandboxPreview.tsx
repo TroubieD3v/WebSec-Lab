@@ -24,9 +24,12 @@ interface Props {
 export function SandboxPreview({ src, labId, onActivity }: Props) {
   const { t } = useI18n()
   const frame = useRef<HTMLIFrameElement>(null)
-  const [executed, setExecuted] = useState<string | null>(null)
-
-  useEffect(() => setExecuted(null), [src])
+  // Tied to the page that produced it, so loading another page clears it without an effect.
+  const [run, setRun] = useState<{ src: string | null; detail: string } | null>(null)
+  // The exact src string we rendered (the iframe's own .src is browser-normalised and may differ).
+  const currentSrc = useRef(src)
+  currentSrc.current = src
+  const executed = run && run.src === src ? run.detail : null
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -38,7 +41,7 @@ export function SandboxPreview({ src, labId, onActivity }: Props) {
         data.lab !== labId
       )
         return
-      setExecuted(String(data.detail ?? ''))
+      setRun({ src: currentSrc.current, detail: String(data.detail ?? '') })
       setTimeout(onActivity, 250) // give the beacon request time to land
     }
     window.addEventListener('message', onMessage)

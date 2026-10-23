@@ -75,7 +75,7 @@ export function VerifyPanel({ labId, onProgress }: Props) {
   }
 
   const byMode = (mode: Mode) => result?.checks.filter((c) => c.mode === mode) ?? []
-  const allPass = result && result.vulnerability_confirmed && result.fix_confirmed
+  const allPass = result?.vulnerability_confirmed && result.fix_confirmed
   return (
     <div className="space-y-4">
       <Card className="flex flex-wrap items-center justify-between gap-4 p-4">

@@ -12,11 +12,8 @@ export function ModeToggle({ mode, onChange }: { mode: Mode; onChange: (mode: Mo
   ]
   return (
     <div className="space-y-2">
-      <div
-        className="relative grid w-full grid-cols-2 rounded-full border border-zinc-800 bg-zinc-900 p-1 sm:w-80"
-        role="radiogroup"
-        aria-label={t('lab.mode.label')}
-      >
+      <fieldset className="relative grid w-full grid-cols-2 rounded-full border border-zinc-800 bg-zinc-900 p-1 sm:w-80">
+        <legend className="sr-only">{t('lab.mode.label')}</legend>
         {/* The sliding thumb carries the mode's colour. */}
         <span
           aria-hidden
@@ -28,21 +25,27 @@ export function ModeToggle({ mode, onChange }: { mode: Mode; onChange: (mode: Mo
           )}
         />
         {options.map(({ mode: m, label, icon: Icon }) => (
-          <button
+          <label
             key={m}
-            role="radio"
-            aria-checked={mode === m}
             data-testid={`mode-${m}`}
-            onClick={() => onChange(m)}
             className={cn(
               'relative z-10 flex cursor-pointer items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300',
-              mode === m ? (m === 'fixed' ? 'text-emerald-200' : 'text-amber-200') : 'text-zinc-500 hover:text-zinc-200',
+              'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-emerald-400',
+              mode === m ? (m === 'fixed' ? 'text-emerald-200' : 'text-amber-200') : 'text-zinc-400 hover:text-zinc-100',
             )}
           >
+            <input
+              type="radio"
+              name="lab-mode"
+              value={m}
+              checked={mode === m}
+              onChange={() => onChange(m)}
+              className="sr-only"
+            />
             <Icon className="size-4" aria-hidden /> {label}
-          </button>
+          </label>
         ))}
-      </div>
+      </fieldset>
       <p className="text-xs text-zinc-500" aria-live="polite">
         {fixed ? t('lab.mode.fixedNote') : t('lab.mode.vulnerableNote')}
       </p>

@@ -27,6 +27,7 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
   const previous = useRef<Record<string, boolean> | null>(null)
   const [justDone, setJustDone] = useState<Set<string>>(new Set())
   const doneKey = steps.map((s) => Number(s.done)).join('')
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `steps` is rebuilt every render; doneKey is its stable identity
   useEffect(() => {
     const now = Object.fromEntries(steps.map((s) => [s.id, s.done]))
     const before = previous.current
@@ -37,7 +38,7 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
     setJustDone(new Set(fresh))
     const timer = setTimeout(() => setJustDone(new Set()), 800)
     return () => clearTimeout(timer)
-  }, [doneKey]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [doneKey])
 
   const next = steps.find((s) => !s.done)?.id
   const message = progress.completed
@@ -51,7 +52,7 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
           : t('msg.start')
 
   return (
-    <div className="space-y-4" aria-label={t('lab.progress')}>
+    <section className="space-y-4" aria-label={t('lab.progress')}>
       <ol className="grid gap-3 sm:grid-cols-4 sm:gap-0">
         {steps.map((step, index) => (
           <li
@@ -96,6 +97,6 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
       <p className="max-w-2xl text-sm text-zinc-400" data-testid="lab-message" aria-live="polite">
         {message}
       </p>
-    </div>
+    </section>
   )
 }

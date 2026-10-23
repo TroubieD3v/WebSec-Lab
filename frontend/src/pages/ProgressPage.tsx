@@ -87,8 +87,8 @@ export function ProgressPage() {
           <p className="text-sm text-zinc-500">{t('progress.empty')}</p>
         ) : (
           <ol className="divide-y divide-zinc-900">
-            {data.history.map((event, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm">
+            {data.history.map((event) => (
+              <li key={event.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm">
                 <span className={cn('size-2 shrink-0 rounded-full', dot[event.kind] ?? 'bg-zinc-600')} aria-hidden />
                 <span className="text-zinc-200">{t(`event.${event.kind}` as Key)}</span>
                 <span className="text-zinc-500">{event.lab_title}</span>

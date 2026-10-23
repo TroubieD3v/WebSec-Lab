@@ -91,7 +91,7 @@ export interface ProgressData {
   checks_run: number
   checks_passed: number
   achievements: { id: string; title: string; description: string; unlocked: boolean }[]
-  history: { lab_id: string; lab_title: string; kind: string; detail: Record<string, unknown>; at: string }[]
+  history: { id: number; lab_id: string; lab_title: string; kind: string; detail: Record<string, unknown>; at: string }[]
 }
 
 export class ApiError extends Error {

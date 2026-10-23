@@ -1,0 +1,10 @@
+# Python lint (ruff check). Formatting is not enforced.
+target-version = "py312"
+extend-exclude = ["frontend", "tests/e2e"]
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # long lines are fine: teaching strings and test tables read better unwrapped
+
+[lint.isort]
+known-first-party = ["app", "common", "main"]

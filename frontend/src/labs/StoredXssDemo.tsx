@@ -20,7 +20,7 @@ export function StoredXssDemo({ mode, onActivity }: DemoProps) {
   const show = () => setSrc(`${LABS_ORIGIN}/${LAB}/${mode}/page?_=${Date.now()}`)
 
   // The guestbook is per mode and persists, so show the current one right away.
-  useEffect(show, [mode]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(show, [mode])
 
   const post = async (event: FormEvent) => {
     event.preventDefault()
@@ -74,6 +74,7 @@ export function StoredXssDemo({ mode, onActivity }: DemoProps) {
           <div className="flex flex-wrap gap-2">
             {PAYLOADS.map((payload) => (
               <button
+                type="button"
                 key={payload}
                 onClick={() => setText(payload)}
                 className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 font-mono text-xs text-zinc-200 hover:bg-zinc-700"

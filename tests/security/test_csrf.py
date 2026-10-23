@@ -66,7 +66,7 @@ def test_session_cookie_never_reaches_the_learner(labs):
 def test_challenge_solved_only_by_a_forged_request_in_vulnerable_mode(labs):
     legit(labs, "vulnerable")
     forged(labs, "fixed")
-    forged(labs, "vulnerable").status_code
+    forged(labs, "vulnerable")
     labs.post("/reset-all")
     labs.post(f"/{LAB}/vulnerable/browser/visit-attacker-page", json={"to": "mallory", "amount": 5}, headers={"x-websec-verifier": "1"})
     assert labs.get(f"/{LAB}/status").json()["solved"] is False

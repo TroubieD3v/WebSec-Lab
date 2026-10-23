@@ -25,6 +25,7 @@ jobs:
             backend/requirements*.txt
             labs/requirements.txt
       - run: pip install -r backend/requirements-dev.txt -r labs/requirements.txt
+      - run: ruff check
       - run: pytest
 
   service-requirements:
@@ -64,6 +65,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
 

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Badge, Button, Card, CodeBlock, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson } from '../services/api'
@@ -11,6 +11,7 @@ const WORDLIST = [
 ]
 
 interface LogEntry {
+  id: number
   line: string
   status: number
 }
@@ -25,7 +26,9 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
   const [note, setNote] = useState<{ tone: 'green' | 'red' | 'amber'; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
 
-  const push = (line: string, status: number) => setLog((l) => [{ line, status }, ...l].slice(0, 40))
+  const nextId = useRef(0)
+  const push = (line: string, status: number) =>
+    setLog((l) => [{ id: nextId.current++, line, status }, ...l].slice(0, 40))
 
   const bearer = (value: string | null) => (value ? { Authorization: `Bearer ${value}` } : undefined)
 
@@ -143,8 +146,8 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
         <h3 className="mb-2 text-sm font-semibold">{t('auth.log')}</h3>
         <CodeBlock className="max-h-80 space-y-1 overflow-y-auto" data-testid="auth-log">
           {log.length === 0 && ' '}
-          {log.map((entry, i) => (
-            <div key={i} className="flex items-start gap-2">
+          {log.map((entry) => (
+            <div key={entry.id} className="flex items-start gap-2">
               <StatusChip status={entry.status} />
               <span className="min-w-0 break-all">{entry.line}</span>
             </div>

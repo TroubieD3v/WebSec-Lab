@@ -75,6 +75,7 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
           <div className="flex flex-wrap gap-2">
             {SAMPLES.map((s) => (
               <button
+                type="button"
                 key={s.id}
                 onClick={() => choose(s)}
                 data-testid={`upload-sample-${s.id}`}

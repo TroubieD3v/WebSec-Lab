@@ -105,6 +105,7 @@ export function LabPage() {
         <div className="flex gap-1 overflow-x-auto border-b border-zinc-800" role="tablist">
           {TABS.map((name) => (
             <button
+              type="button"
               key={name}
               role="tab"
               aria-selected={tab === name}

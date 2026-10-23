@@ -6,9 +6,11 @@ import { cn } from './ui'
 function LangSwitch() {
   const { lang, setLang } = useI18n()
   return (
-    <div className="flex rounded-lg border border-zinc-800 p-0.5" role="group" aria-label="Language">
+    <fieldset className="flex rounded-lg border border-zinc-800 p-0.5">
+      <legend className="sr-only">Language / Язык</legend>
       {(['en', 'ru'] as Lang[]).map((l) => (
         <button
+          type="button"
           key={l}
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
@@ -20,7 +22,7 @@ function LangSwitch() {
           {l}
         </button>
       ))}
-    </div>
+    </fieldset>
   )
 }
 
