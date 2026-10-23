@@ -1,0 +1,31 @@
+# Weekly, grouped dependency updates. Python pins live in requirements*.txt compiled from
+# requirements*.in with pip-tools; Dependabot understands that layout and updates both.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directories: ["/labs", "/backend"]
+    schedule: { interval: weekly }
+    groups:
+      python:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directories: ["/frontend", "/tests/e2e"]
+    schedule: { interval: weekly }
+    groups:
+      npm:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directories: ["/labs", "/backend", "/frontend"]
+    schedule: { interval: weekly }
+    groups:
+      base-images:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      actions:
+        patterns: ["*"]
