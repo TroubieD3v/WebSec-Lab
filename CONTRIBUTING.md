@@ -9,15 +9,15 @@ content.
 See "Local development" in the [README](README.md). Run the checks before opening a pull request:
 
 ```bash
-pytest
-cd frontend && npm run typecheck && npm run build
+ruff check && pytest
+cd frontend && npm run lint && npm run typecheck && npm run build
 cd tests/e2e && npx playwright test      # needs the stack running (docker compose up, or the three dev servers)
 ```
 
 ## Release checklist
 
 ```bash
-pytest && (cd frontend && npm run typecheck && npm run build)
+ruff check && pytest && (cd frontend && npm run lint && npm run typecheck && npm run build)
 python tests/check_links.py                    # every reference URL still resolves (needs internet)
 docker compose up --build --detach --wait
 python tests/smoke.py                          # every lab verifies against both modes
@@ -27,6 +27,20 @@ docker compose down --volumes
 
 Then update `CHANGELOG.md`, bump the versions (`backend/app/__init__.py`, `frontend/package.json`,
 `tests/e2e/package.json`), commit, and tag `vX.Y.Z` (the release workflow publishes the notes).
+
+## Dependencies
+
+Python: change the ranges in `labs/requirements.in` or `backend/requirements*.in`, then regenerate the pins on
+Python 3.12 (the version in the Docker images):
+
+```bash
+pip install pip-tools
+(cd labs && pip-compile --strip-extras -o requirements.txt requirements.in)
+(cd backend && pip-compile --strip-extras -o requirements.txt requirements.in && pip-compile --strip-extras -o requirements-dev.txt requirements-dev.in)
+```
+
+npm: use `npm install` as usual; the lockfiles are committed. The README demo is regenerated with
+`node tests/e2e/scripts/demo-frames.mjs && python tests/e2e/scripts/make_gif.py` (needs Pillow).
 
 ## Adding a lab
 

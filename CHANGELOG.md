@@ -2,6 +2,25 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [1.2.1]
+
+### Fixed
+- Accessibility (WCAG 2.1 AA): secondary and tertiary grey text was 2.3:1 and 3.8:1 against the dark background and
+  is now at least 4.5:1 everywhere; the logo link's accessible name matches its visible text; locked achievements are
+  muted with colour instead of opacity; long code blocks can be focused and scrolled from the keyboard.
+- The mode and persona switches were buttons pretending to be radio buttons without arrow-key support; they are now
+  native radio groups.
+- The Stored XSS "Clear comments" button also submitted the comment form (buttons now default to `type="button"`).
+
+### Added
+- Linting in CI: Ruff for Python, Biome for the frontend (typescript-eslint does not support TypeScript 7).
+- An axe-core audit in the end-to-end tests for every page, lab, tab and mode, plus a keyboard test for the mode switch.
+- Pinned Python dependencies (pip-tools) and Dependabot for pip, npm, Docker and GitHub Actions.
+- A demo GIF and badges in the README.
+
+### Changed
+- The default branch is `main`.
+
 ## [1.2.0]
 
 ### Changed

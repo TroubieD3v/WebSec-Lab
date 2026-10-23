@@ -1,5 +1,11 @@
 # WebSec Lab: интерактивная площадка по веб-безопасности
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-a2a6ae)](LICENSE)
+![OWASP Top 10:2025](https://img.shields.io/badge/OWASP%20Top%2010-2025-e8a33d)
+![Labs](https://img.shields.io/badge/labs-12-7cc4e8)
+![WCAG 2.1 AA](https://img.shields.io/badge/WCAG%202.1-AA-7cc4e8)
+![Docker Compose](https://img.shields.io/badge/run%20with-Docker%20Compose-a2a6ae)
+
 [English](README.md) · **Русский**
 
 WebSec Lab это локальная open-source платформа для изучения веб-безопасности на **реальном коде**: вы ломаете
@@ -10,6 +16,8 @@ Attack Playground для HTTP-запросов, сравнение кода, п�
 
 > **Внимание**: сервис `labs` уязвим намеренно. Запускайте его только на `127.0.0.1` и никогда не открывайте в сеть.
 > См. [SECURITY.md](SECURITY.md) и [модель угроз](docs/threat-model.md).
+
+![Взлом в уязвимом режиме, переключение на защищённый, та же атака отклонена](docs/screenshots/demo.gif)
 
 ## Лаборатории
 
@@ -63,10 +71,10 @@ cd frontend && npm install && npm run dev
 ## Тесты
 
 ```bash
-pytest                                  # 191 тест: поведение лабораторий и управляющий слой
-cd frontend && npm run typecheck        # TypeScript
+ruff check && pytest                    # линтер и 196 тестов: поведение лабораторий и управляющий слой
+cd frontend && npm run lint && npm run typecheck
 cd tests/e2e && npm install && npx playwright install chromium
-npx playwright test                     # 43 браузерных теста на запущенном стеке
+npx playwright test                     # 50 браузерных тестов на запущенном стеке, включая аудит WCAG 2.1 AA
 ```
 
 Подробности: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](docs/threat-model.md).

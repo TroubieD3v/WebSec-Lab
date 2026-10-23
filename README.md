@@ -1,5 +1,11 @@
 # WebSec Lab: Interactive Web Security Playground
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-a2a6ae)](LICENSE)
+![OWASP Top 10:2025](https://img.shields.io/badge/OWASP%20Top%2010-2025-e8a33d)
+![Labs](https://img.shields.io/badge/labs-12-7cc4e8)
+![WCAG 2.1 AA](https://img.shields.io/badge/WCAG%202.1-AA-7cc4e8)
+![Docker Compose](https://img.shields.io/badge/run%20with-Docker%20Compose-a2a6ae)
+
 **English** · [Русский](README.ru.md)
 
 WebSec Lab is a local, open-source platform for learning web security by **breaking and fixing real code**.
@@ -10,6 +16,11 @@ automatic verification.
 
 > **Warning**: the `labs` service is vulnerable on purpose. Run it only on `127.0.0.1` and never expose it to a
 > network. See [SECURITY.md](SECURITY.md) and the [threat model](docs/threat-model.md).
+
+![Exploit the vulnerable mode, switch to the fixed mode, watch the same attack get refused](docs/screenshots/demo.gif)
+
+*Alice reads Bob's booking in the vulnerable mode; in the fixed mode the same request is refused and the lab
+records that you saw the fix hold.*
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
@@ -91,11 +102,14 @@ cd frontend && npm install && npm run dev
 ## Tests
 
 ```bash
-pytest                                  # 191 tests: lab behaviour (tests/security) + control plane (backend/tests)
-cd frontend && npm run typecheck        # TypeScript
+ruff check && pytest                    # lint + 196 tests: lab behaviour (tests/security) and control plane (backend/tests)
+cd frontend && npm run lint && npm run typecheck
 cd tests/e2e && npm install && npx playwright install chromium
-npx playwright test                     # 43 browser tests against a running stack
+npx playwright test                     # 50 browser tests against a running stack, including a WCAG 2.1 AA audit
 ```
+
+Python dependencies are pinned: edit the ranges in `requirements*.in`, then regenerate the pinned `requirements*.txt`
+with `pip-compile` (pip-tools). Dependabot proposes weekly updates.
 
 `tests/security` proves, for every lab, that the vulnerable mode is exploitable, that the fixed mode blocks the same
 input, and that normal use still works. `tests/e2e` drives a real browser, including executing XSS inside the
@@ -131,7 +145,8 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](
 | v1.0.1 | Fixed dead reference links; link checker |
 | v1.0.2 | Configurable dashboard port; Docker stack verified end to end |
 | v1.1.0 | A lab now requires watching the fix block your own attack; mobile layout fixes |
-| **v1.2.0** | **Minimal dark design with mode-driven colour and motion** |
+| v1.2.0 | Minimal dark design with mode-driven colour and motion |
+| **v1.2.1** | **WCAG 2.1 AA, linting, pinned dependencies, Dependabot** |
 
 ## License
 
