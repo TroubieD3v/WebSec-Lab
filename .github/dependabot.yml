@@ -23,9 +23,10 @@ updates:
       base-images:
         patterns: ["*"]
     ignore:
-      # Odd Node.js majors never become LTS; stay on LTS images.
+      # Stay on the Node.js LTS line: odd majors never become LTS, and version ranges do not match
+      # tags like "25-alpine", so majors are moved by hand when the next LTS is out. Minor/patch still flow.
       - dependency-name: node
-        versions: ["23.x", "25.x", "27.x", "29.x"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
