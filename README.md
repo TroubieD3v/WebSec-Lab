@@ -1,6 +1,6 @@
 # WebSec Lab: Interactive Web Security Playground
 
-[![CI](https://github.com/TroubieD3v/websec-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/TroubieD3v/websec-lab/actions/workflows/ci.yml)
+[![CI](https://github.com/TroubieD3v/WebSec-Lab/actions/workflows/ci.yml/badge.svg)](https://github.com/TroubieD3v/WebSec-Lab/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-a2a6ae)](LICENSE)
 ![OWASP Top 10:2025](https://img.shields.io/badge/OWASP%20Top%2010-2025-e8a33d)
 ![Labs](https://img.shields.io/badge/labs-12-7cc4e8)
@@ -67,8 +67,8 @@ The interface is available in **English and Russian** (switch in the header).
 Requires Docker with Compose v2.
 
 ```bash
-git clone https://github.com/TroubieD3v/websec-lab.git
-cd websec-lab
+git clone https://github.com/TroubieD3v/WebSec-Lab.git
+cd WebSec-Lab
 docker compose up --build
 ```
 

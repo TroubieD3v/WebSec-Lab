@@ -20,7 +20,7 @@ from urllib.parse import urlsplit
 
 CONTENT = Path(__file__).resolve().parent.parent / "backend" / "app" / "content"
 URL = re.compile(r'Reference\(\s*(?:"[^"]*"|\'[^\']*\')\s*,\s*\n?\s*"(https?://[^"]+)"', re.S)
-HEADERS = {"User-Agent": "websec-lab-link-check/1.0 (+https://github.com/TroubieD3v/websec-lab)"}
+HEADERS = {"User-Agent": "websec-lab-link-check/1.0 (+https://github.com/TroubieD3v/WebSec-Lab)"}
 TIMEOUT = 10
 # Hosts that gave no HTTP answer at all; their other links are not waited on (a blocked host would
 # otherwise cost a full timeout per link and look like a hang).
