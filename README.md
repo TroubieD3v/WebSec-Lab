@@ -154,7 +154,8 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/threat-model.md](
 | v1.0.2 | Configurable dashboard port; Docker stack verified end to end |
 | v1.1.0 | A lab now requires watching the fix block your own attack; mobile layout fixes |
 | v1.2.0 | Minimal dark design with mode-driven colour and motion |
-| **v1.2.1** | **WCAG 2.1 AA, linting, pinned dependencies, Dependabot** |
+| v1.2.1 | WCAG 2.1 AA, linting, pinned dependencies, Dependabot |
+| **v1.3.0** | **New design from one palette, light theme next to the default dark one** |
 
 ## License
 

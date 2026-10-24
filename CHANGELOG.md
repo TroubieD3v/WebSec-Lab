@@ -2,7 +2,7 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.3.0]
 
 ### Changed
 - New design: Manrope headlines and Inter text, square controls, rounded cards, bento layouts, a progress dial on
