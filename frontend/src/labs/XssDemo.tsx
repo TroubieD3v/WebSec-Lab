@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { PlayCircle } from 'lucide-react'
 import { SandboxPreview } from '../components/SandboxPreview'
-import { Button, Card } from '../components/ui'
+import { Button, Card, chipClass, fieldClass } from '../components/ui'
 import { useI18n } from '../i18n'
 import { LABS_ORIGIN } from '../services/api'
 import type { DemoProps } from './types'
@@ -21,13 +21,13 @@ export function XssDemo({ mode, onActivity }: DemoProps) {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
         <form onSubmit={submit} className="space-y-3">
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">{t('xss.label')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('xss.label')}</span>
             <input
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm"
+              className={fieldClass}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               data-testid="xss-input"
@@ -40,21 +40,21 @@ export function XssDemo({ mode, onActivity }: DemoProps) {
           </Button>
         </form>
         <div>
-          <span className="mb-1.5 block text-xs text-zinc-500">{t('xss.payloads')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('xss.payloads')}</span>
           <div className="flex flex-wrap gap-2">
             {PAYLOADS.map((payload) => (
               <button
                 type="button"
                 key={payload}
                 onClick={() => setQuery(payload)}
-                className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 font-mono text-xs text-zinc-200 hover:bg-zinc-700"
+                className={`${chipClass} font-mono`}
               >
                 {payload}
               </button>
             ))}
           </div>
         </div>
-        <p className="text-xs text-zinc-500">{t('xss.note')}</p>
+        <p className="text-xs text-ink-subtle">{t('xss.note')}</p>
       </Card>
       <SandboxPreview src={src} labId="xss" onActivity={onActivity} />
     </div>

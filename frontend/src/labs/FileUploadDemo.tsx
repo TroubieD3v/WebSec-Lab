@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Upload } from 'lucide-react'
 import { SandboxPreview } from '../components/SandboxPreview'
-import { Badge, Button, Card, CodeBlock, StatusChip } from '../components/ui'
+import { Badge, Button, Card, chipClass, CodeBlock, fieldClass, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { LABS_ORIGIN, labUrl, tryJson } from '../services/api'
 import type { DemoProps } from './types'
 
 const LAB = 'file-upload'
-const field = 'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm'
+const field = fieldClass
 
 // 1x1 transparent PNG
 const PNG = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='), (c) => c.charCodeAt(0))
@@ -68,10 +68,10 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
 
   const isImage = mode === 'fixed' && uploaded?.filename && /\.(png|jpe?g)$/.test(uploaded.filename)
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-3 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-4 p-6">
         <div>
-          <span className="mb-1.5 block text-xs text-zinc-500">{t('upload.samples')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('upload.samples')}</span>
           <div className="flex flex-wrap gap-2">
             {SAMPLES.map((s) => (
               <button
@@ -79,7 +79,7 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
                 key={s.id}
                 onClick={() => choose(s)}
                 data-testid={`upload-sample-${s.id}`}
-                className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-700"
+                className={chipClass}
               >
                 {t(`upload.sample.${s.id}`)}
               </button>
@@ -88,16 +88,16 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
         </div>
         <div className="flex gap-2">
           <label className="min-w-0 flex-1">
-            <span className="mb-1 block text-xs text-zinc-500">{t('upload.filename')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('upload.filename')}</span>
             <input className={field} value={filename} onChange={(e) => setFilename(e.target.value)} data-testid="upload-filename" />
           </label>
           <label className="min-w-0 flex-1">
-            <span className="mb-1 block text-xs text-zinc-500">{t('upload.type')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('upload.type')}</span>
             <input className={field} value={type} onChange={(e) => setType(e.target.value)} data-testid="upload-type" />
           </label>
         </div>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('upload.content')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('upload.content')}</span>
           <textarea
             className={field}
             rows={5}
@@ -111,12 +111,12 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
         <Button variant="primary" onClick={upload} loading={busy} data-testid="upload-send">
           {!busy && <Upload className="size-4" aria-hidden />} {t('upload.send')}
         </Button>
-        <p className="text-xs text-zinc-500">{t('upload.note')}</p>
+        <p className="text-xs text-ink-subtle">{t('upload.note')}</p>
       </Card>
 
       <div className="space-y-4">
         {uploaded && (
-          <Card className="space-y-2 p-4" aria-live="polite">
+          <Card surface="lowest" className="space-y-3 p-6" aria-live="polite">
             <div className="flex flex-wrap items-center gap-2">
               <StatusChip status={uploaded.status} data-testid="upload-status" />
               {uploaded.filename && <Badge data-testid="upload-saved-as">{t('upload.savedAs', { name: uploaded.filename })}</Badge>}
@@ -126,8 +126,8 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
           </Card>
         )}
         {isImage ? (
-          <Card className="p-4">
-            <img src={previewSrc ?? ''} alt="" className="max-h-40 rounded border border-zinc-700 bg-white" data-testid="upload-image" />
+          <Card className="p-6">
+            <img src={previewSrc ?? ''} alt="" className="max-h-40 border border-line bg-white" data-testid="upload-image" />
           </Card>
         ) : (
           <SandboxPreview src={previewSrc} labId={LAB} onActivity={onActivity} />

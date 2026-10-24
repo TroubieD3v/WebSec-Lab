@@ -49,7 +49,7 @@ export function SandboxPreview({ src, labId, onActivity }: Props) {
   }, [labId, onActivity])
 
   return (
-    <Card className="space-y-3 p-4">
+    <Card className="space-y-4 p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-semibold">{t('xss.preview')}</h3>
         {executed !== null ? (
@@ -60,7 +60,7 @@ export function SandboxPreview({ src, labId, onActivity }: Props) {
           <Badge data-testid="xss-waiting">{t('xss.waiting')}</Badge>
         )}
       </div>
-      <div className="overflow-hidden rounded-lg border border-zinc-700 bg-white">
+      <div className="overflow-hidden border border-line bg-white">
         {src ? (
           <iframe
             ref={frame}
@@ -73,7 +73,7 @@ export function SandboxPreview({ src, labId, onActivity }: Props) {
             data-testid="xss-frame"
           />
         ) : (
-          <div className="grid h-56 place-items-center text-sm text-zinc-400">—</div>
+          <div className="grid h-56 place-items-center text-sm text-ink-muted">—</div>
         )}
       </div>
     </Card>

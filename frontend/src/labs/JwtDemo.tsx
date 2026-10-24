@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Badge, Button, Card, CodeBlock, StatusChip } from '../components/ui'
+import { Badge, Button, Card, CodeBlock, fieldBase, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson, type LabResponse } from '../services/api'
 import type { DemoProps } from './types'
 
 const LAB = 'jwt'
-const field = 'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-xs'
+const field = `w-full text-xs ${fieldBase}`
 
 const encoder = new TextEncoder()
 const b64url = (bytes: Uint8Array) =>
@@ -88,8 +88,8 @@ export function JwtDemo({ mode, onActivity }: DemoProps) {
 
   const admin = result?.path === 'admin' && result.response.status === 200
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-3 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-4 p-6">
         <h3 className="text-sm font-semibold">{t('jwt.login')}</h3>
         <div className="flex gap-2">
           <input className={field} value={username} onChange={(e) => setUsername(e.target.value)} aria-label={t('auth.user')} data-testid="jwt-user" />
@@ -100,15 +100,15 @@ export function JwtDemo({ mode, onActivity }: DemoProps) {
         </div>
         <h3 className="pt-2 text-sm font-semibold">{t('jwt.workbench')}</h3>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('jwt.header')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('jwt.header')}</span>
           <textarea className={field} rows={4} value={header} onChange={(e) => setHeader(e.target.value)} spellCheck={false} data-testid="jwt-header" />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('jwt.payload')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('jwt.payload')}</span>
           <textarea className={field} rows={4} value={payload} onChange={(e) => setPayload(e.target.value)} spellCheck={false} data-testid="jwt-payload" />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('jwt.secret')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('jwt.secret')}</span>
           <input className={field} value={secret} onChange={(e) => setSecret(e.target.value)} spellCheck={false} data-testid="jwt-secret" />
         </label>
         <div className="flex flex-wrap gap-2">
@@ -119,12 +119,12 @@ export function JwtDemo({ mode, onActivity }: DemoProps) {
             {t('jwt.none')}
           </Button>
         </div>
-        {error && <p className="text-xs text-rose-300">{error}</p>}
+        {error && <p className="text-xs text-danger">{error}</p>}
       </Card>
 
-      <Card className="space-y-3 p-4" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('jwt.token')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('jwt.token')}</span>
           <textarea className={field} rows={4} value={token} onChange={(e) => load(e.target.value.trim())} spellCheck={false} data-testid="jwt-token" />
         </label>
         <div className="flex flex-wrap gap-2">
@@ -150,7 +150,7 @@ export function JwtDemo({ mode, onActivity }: DemoProps) {
             </CodeBlock>
           </>
         )}
-        <p className="text-xs text-zinc-500">{t('jwt.note')}</p>
+        <p className="text-xs text-ink-subtle">{t('jwt.note')}</p>
       </Card>
     </div>
   )

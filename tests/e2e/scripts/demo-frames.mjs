@@ -11,7 +11,10 @@ mkdirSync(dir, { recursive: true })
 const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: 1200, height: 760 }, locale: 'en-US' })
 await page.request.post(`${base}/api/progress/reset`)
-await page.addInitScript(() => localStorage.setItem('websec-lang', 'en'))
+await page.addInitScript(() => {
+  localStorage.setItem('websec-lang', 'en')
+  localStorage.setItem('websec-theme', 'dark')
+})
 
 const frames = []
 let last = Date.now()
@@ -31,7 +34,7 @@ const record = async (ms) => {
 
 await page.goto(`${base}/labs/idor`)
 await page.getByTestId('idor-id').waitFor()
-await page.evaluate(() => window.scrollTo(0, 230))
+await page.evaluate(() => window.scrollTo(0, 340))
 await shot(1400)
 
 // 1. Attack the vulnerable mode: Alice reads Bob's booking.

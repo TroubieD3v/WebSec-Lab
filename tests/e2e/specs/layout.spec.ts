@@ -58,3 +58,15 @@ test('code diff lines stay inside their own column', async ({ page }) => {
     expect(spilling, lab).toBe(0)
   }
 })
+
+test('the theme is dark by default, switches to light and stays after a reload', async ({ page }) => {
+  await page.goto('/')
+  const html = page.locator('html')
+  await expect(html).not.toHaveClass(/light/)
+  await page.getByTestId('theme-toggle').click()
+  await expect(html).toHaveClass(/light/)
+  await page.reload()
+  await expect(html).toHaveClass(/light/) // applied before paint by /theme-init.js
+  await page.getByTestId('theme-toggle').click()
+  await expect(html).not.toHaveClass(/light/)
+})

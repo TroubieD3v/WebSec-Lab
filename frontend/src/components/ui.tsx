@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, type LucideIcon } from 'lucide-react'
 import { useI18n } from '../i18n'
 import type { LabStatus } from '../services/api'
 
@@ -7,28 +7,37 @@ export function cn(...parts: (string | false | null | undefined)[]): string {
   return parts.filter(Boolean).join(' ')
 }
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  // min-w-0: as a grid/flex item a card must be allowed to shrink below its widest line (code blocks scroll instead).
-  return <div className={cn('min-w-0 rounded-xl border border-zinc-800/80 bg-zinc-900/70', className)} {...props} />
+type Surface = 'low' | 'lowest' | 'base' | 'high'
+const surfaces: Record<Surface, string> = {
+  low: 'bg-surface-low',
+  lowest: 'bg-surface-lowest',
+  base: 'bg-surface',
+  high: 'bg-surface-high',
+}
+
+/** The one rounded shape in the system. min-w-0: as a grid/flex item it may shrink below its widest line. */
+export function Card({ className, surface = 'low', ...props }: HTMLAttributes<HTMLDivElement> & { surface?: Surface }) {
+  return <div className={cn('card min-w-0', surfaces[surface], className)} {...props} />
 }
 
 type Tone = 'neutral' | 'green' | 'red' | 'amber' | 'blue' | 'violet'
 const tones: Record<Tone, string> = {
-  neutral: 'border-zinc-700/70 bg-zinc-800/50 text-zinc-300',
-  green: 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200',
-  red: 'border-rose-400/25 bg-rose-400/10 text-rose-200',
-  amber: 'border-amber-400/25 bg-amber-400/10 text-amber-200',
+  neutral: 'bg-surface-highest text-ink-muted',
+  green: 'bg-secondary-container text-on-secondary-container',
+  red: 'bg-danger-container text-on-danger-container',
+  amber: 'bg-tertiary-container text-on-tertiary-container',
   // Category tags stay quiet: colour is reserved for the two modes and for outcomes.
-  blue: 'border-zinc-700/70 bg-transparent text-zinc-400',
-  violet: 'border-zinc-700/70 bg-transparent text-zinc-400',
+  blue: 'border border-line text-ink-muted',
+  violet: 'border border-line text-ink-muted',
 }
 
+/** Rounded status pill (the palette's "OPTIMIZED" / "WEEKLY INSIGHT" shape). */
 export function Badge({ tone = 'neutral', className, ...props }: HTMLAttributes<HTMLSpanElement> & { tone?: Tone }) {
   return (
     <span
       className={cn(
         // Long outcome messages may wrap on narrow screens instead of running past the card edge.
-        'inline-flex max-w-full items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex max-w-full items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold',
         tones[tone],
         className,
       )}
@@ -37,14 +46,18 @@ export function Badge({ tone = 'neutral', className, ...props }: HTMLAttributes<
   )
 }
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
+type Variant = 'primary' | 'secondary' | 'inverted' | 'outlined' | 'ghost' | 'danger'
 const variants: Record<Variant, string> = {
-  primary: 'bg-emerald-400 text-zinc-950 hover:bg-emerald-300 disabled:hover:bg-emerald-400',
-  secondary: 'border border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:border-zinc-600 hover:bg-zinc-800 disabled:hover:bg-zinc-800/80',
-  ghost: 'text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100',
-  danger: 'border border-amber-400/40 bg-amber-400/10 text-amber-200 hover:bg-amber-400/20',
+  primary: 'bg-primary text-on-primary hover:bg-primary-hover',
+  secondary: 'bg-surface-highest text-ink hover:bg-surface-high',
+  inverted: 'bg-inverse text-on-inverse hover:opacity-90',
+  outlined: 'border border-line-strong text-ink hover:bg-surface-high',
+  ghost: 'text-ink-muted hover:bg-surface-high hover:text-ink',
+  // Attack actions: the tertiary (vulnerable) fill.
+  danger: 'bg-tertiary-fill text-on-tertiary-fill hover:opacity-90',
 }
 
+/** Square buttons, as in the palette. Defaults to type="button" so it never submits a form by accident. */
 export function Button({
   variant = 'secondary',
   type = 'button',
@@ -58,7 +71,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-[color,background-color,border-color,transform] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100',
+        'inline-flex cursor-pointer items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold transition-[color,background-color,border-color,opacity,transform] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100',
         variants[variant],
         className,
       )}
@@ -71,10 +84,82 @@ export function Button({
   )
 }
 
+/** Small square preset / payload button. */
+export const chipClass = 'cursor-pointer bg-surface-highest px-2.5 py-1.5 text-xs text-ink transition-colors hover:bg-surface-high'
+
+/** Shared look for text inputs, selects and textareas: square, on the lowest surface. No width or size. */
+export const fieldBase =
+  'border border-line bg-surface-lowest px-3 py-2.5 font-mono text-ink placeholder:text-ink-subtle transition-colors focus:border-line-strong'
+export const fieldClass = `w-full text-sm ${fieldBase}`
+
+export function FieldLabel({ children }: { children: ReactNode }) {
+  return <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{children}</span>
+}
+
+/** Small tracked label above a value (stat tiles, card kickers). */
+export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
+  return <p className={cn('text-[11px] font-semibold tracking-[0.12em] text-ink-subtle uppercase', className)}>{children}</p>
+}
+
+type TileTone = 'neutral' | 'green' | 'amber' | 'red' | 'primary'
+const tileTones: Record<TileTone, string> = {
+  neutral: 'bg-surface-highest text-ink-muted',
+  green: 'bg-secondary-container text-on-secondary-container',
+  amber: 'bg-tertiary-container text-on-tertiary-container',
+  red: 'bg-danger-container text-on-danger-container',
+  primary: 'bg-primary text-on-primary',
+}
+
+/** Square icon tile. */
+export function IconTile({ icon: Icon, tone = 'neutral', size = 'md' }: { icon: LucideIcon; tone?: TileTone; size?: 'sm' | 'md' | 'lg' }) {
+  const box = size === 'sm' ? 'size-9' : size === 'lg' ? 'size-14' : 'size-11'
+  const glyph = size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'
+  return (
+    <span className={cn('grid shrink-0 place-items-center', box, tileTones[tone])} aria-hidden>
+      <Icon className={glyph} />
+    </span>
+  )
+}
+
+/** Flat, square-ended progress bar (the palette's thick bars). `value` is 0..1. */
+export function ProgressBar({ value, tone = 'primary', className, label }: { value: number; tone?: 'primary' | 'green' | 'amber'; className?: string; label?: string }) {
+  const fill = tone === 'green' ? 'bg-secondary-fill' : tone === 'amber' ? 'bg-tertiary-fill' : 'bg-primary'
+  const pct = Math.round(Math.max(0, Math.min(1, value)) * 100)
+  return (
+    <div
+      className={cn('h-2 w-full bg-surface-highest', className)}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={pct}
+      aria-label={label}
+    >
+      <div className={cn('h-full transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]', fill)} style={{ width: `${pct}%` }} />
+    </div>
+  )
+}
+
+export function StatTile({ label, value, accent, testId }: { label: string; value: ReactNode; accent?: 'green' | 'amber'; testId?: string }) {
+  return (
+    <div className="card flex flex-col justify-between gap-3 bg-surface-low p-5 sm:p-6">
+      <Eyebrow>{label}</Eyebrow>
+      <p
+        className={cn(
+          'font-headline text-3xl font-semibold tracking-tight tabular-nums',
+          accent === 'green' ? 'text-secondary' : accent === 'amber' ? 'text-tertiary' : 'text-ink',
+        )}
+        data-testid={testId}
+      >
+        {value}
+      </p>
+    </div>
+  )
+}
+
 export function Spinner({ label }: { label?: string }) {
   const { t } = useI18n()
   return (
-    <div className="flex items-center gap-2 py-10 text-sm text-zinc-400" role="status">
+    <div className="flex items-center gap-2 py-10 text-sm text-ink-muted" role="status">
       <Loader2 className="size-4 animate-spin" aria-hidden /> {label ?? t('common.loading')}
     </div>
   )
@@ -125,7 +210,7 @@ interface RadioOption<T extends string> {
   testId?: string
 }
 
-/** A small segmented radio group built on native inputs, so arrow keys and screen readers just work. */
+/** A segmented radio group built on native inputs, so arrow keys and screen readers just work. */
 export function RadioPills<T extends string>({
   name,
   legend,
@@ -141,16 +226,16 @@ export function RadioPills<T extends string>({
 }) {
   return (
     <fieldset>
-      <legend className="mb-1.5 text-xs text-zinc-400">{legend}</legend>
-      <div className="inline-flex rounded-lg border border-zinc-700 p-0.5">
+      <legend className="mb-1.5 text-xs font-medium text-ink-subtle">{legend}</legend>
+      <div className="inline-flex bg-surface-highest p-1">
         {options.map((option) => (
           <label
             key={option.value}
             data-testid={option.testId}
             className={cn(
-              'cursor-pointer rounded-md px-4 py-1.5 text-sm font-medium transition-colors duration-200',
-              'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-emerald-400',
-              value === option.value ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-400 hover:text-zinc-100',
+              'cursor-pointer px-4 py-1.5 text-sm font-semibold transition-colors duration-200',
+              'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-secondary-fill',
+              value === option.value ? 'bg-primary text-on-primary' : 'text-ink-muted hover:text-ink',
             )}
           >
             <input
@@ -169,13 +254,46 @@ export function RadioPills<T extends string>({
   )
 }
 
+/** Square segmented tabs (code views and the like). The active one takes the primary fill. */
+export function Segmented<T extends string>({
+  value,
+  options,
+  onChange,
+  role = 'tablist',
+}: {
+  value: T
+  options: { value: T; label: string }[]
+  onChange: (value: T) => void
+  role?: 'tablist'
+}) {
+  return (
+    <div className="inline-flex max-w-full overflow-x-auto bg-surface-highest p-1" role={role}>
+      {options.map((option) => (
+        <button
+          type="button"
+          key={option.value}
+          role="tab"
+          aria-selected={value === option.value}
+          onClick={() => onChange(option.value)}
+          className={cn(
+            'cursor-pointer px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors',
+            value === option.value ? 'bg-primary text-on-primary' : 'text-ink-muted hover:text-ink',
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function ErrorBox({ message, onRetry }: { message: string; onRetry?: () => void }) {
   const { t } = useI18n()
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-200" role="alert">
+    <div className="card flex items-center justify-between gap-3 bg-danger-container p-5 text-sm text-on-danger-container" role="alert">
       <span>{message}</span>
       {onRetry && (
-        <Button variant="secondary" onClick={onRetry}>
+        <Button variant="primary" onClick={onRetry}>
           {t('common.retry')}
         </Button>
       )}
@@ -187,7 +305,7 @@ export function CodeBlock({ className, ...props }: HTMLAttributes<HTMLPreElement
   return (
     // biome-ignore lint/a11y/noNoninteractiveTabindex: long code scrolls; keyboard users need to focus it to scroll
     <pre tabIndex={0}
-      className={cn('overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3 font-mono text-xs leading-relaxed text-zinc-200', className)}
+      className={cn('overflow-x-auto border border-line bg-surface-lowest p-3.5 font-mono text-xs leading-relaxed text-ink', className)}
       {...props}
     />
   )
@@ -196,7 +314,7 @@ export function CodeBlock({ className, ...props }: HTMLAttributes<HTMLPreElement
 export function StatusChip({ status, ...props }: { status: number } & HTMLAttributes<HTMLSpanElement>) {
   const tone: Tone = status >= 500 ? 'red' : status >= 400 ? 'amber' : status >= 200 && status < 300 ? 'green' : 'neutral'
   return (
-    <Badge tone={tone} {...props}>
+    <Badge tone={tone} className="font-mono" {...props}>
       {status}
     </Badge>
   )

@@ -6,12 +6,12 @@ import { cn } from './ui'
 
 type StepId = 'exploit' | 'defend' | 'verify' | 'complete'
 
-// Each step keeps the colour of what it proves: you broke it (amber), the fix held (glacier).
-const TONE: Record<StepId, { dot: string; ring: string; color: string }> = {
-  exploit: { dot: 'bg-amber-400 border-amber-400', ring: 'border-amber-400/50', color: 'rgb(232 163 61 / 0.55)' },
-  defend: { dot: 'bg-emerald-400 border-emerald-400', ring: 'border-emerald-400/50', color: 'rgb(124 196 232 / 0.55)' },
-  verify: { dot: 'bg-zinc-100 border-zinc-100', ring: 'border-zinc-400/50', color: 'rgb(230 228 223 / 0.45)' },
-  complete: { dot: 'bg-emerald-400 border-emerald-400', ring: 'border-emerald-400/50', color: 'rgb(124 196 232 / 0.55)' },
+// Each step keeps the colour of what it proves: you broke it (tertiary), the fix held (secondary).
+const TONE: Record<StepId, { fill: string; text: string; color: string }> = {
+  exploit: { fill: 'bg-tertiary-fill', text: 'text-on-tertiary-fill', color: 'var(--tertiary-fill)' },
+  defend: { fill: 'bg-secondary-fill', text: 'text-on-secondary-fill', color: 'var(--secondary-fill)' },
+  verify: { fill: 'bg-primary', text: 'text-on-primary', color: 'var(--primary)' },
+  complete: { fill: 'bg-secondary-fill', text: 'text-on-secondary-fill', color: 'var(--secondary-fill)' },
 }
 
 export function LabProgressTracker({ progress }: { progress: LabProgress }) {
@@ -52,49 +52,48 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
           : t('msg.start')
 
   return (
-    <section className="space-y-4" aria-label={t('lab.progress')}>
-      <ol className="grid gap-3 sm:grid-cols-4 sm:gap-0">
+    <section className="space-y-5" aria-label={t('lab.progress')}>
+      <ol className="grid gap-4 sm:grid-cols-4 sm:gap-3">
         {steps.map((step, index) => (
-          <li
-            key={step.id}
-            data-testid={`step-${step.id}`}
-            data-done={step.done}
-            className="flex items-center gap-3 sm:flex-col sm:items-start sm:gap-2.5"
-          >
-            <div className="flex items-center sm:w-full">
+          <li key={step.id} data-testid={`step-${step.id}`} data-done={step.done} className="flex gap-3 sm:flex-col sm:gap-3">
+            {/* The palette's thick bar: filled in the step's colour once the server confirms it. */}
+            <span aria-hidden className="hidden h-2 bg-surface-highest sm:block">
+              <span
+                className={cn(
+                  'block h-full origin-left transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                  TONE[step.id].fill,
+                  step.done ? 'scale-x-100' : 'scale-x-0',
+                )}
+              />
+            </span>
+            <span className="flex items-start gap-3">
               <span
                 style={{ ['--step-color' as string]: TONE[step.id].color }}
                 className={cn(
-                  'grid size-5 shrink-0 place-items-center rounded-full border transition-colors duration-500',
-                  step.done ? TONE[step.id].dot : step.id === next ? TONE[step.id].ring : 'border-zinc-700',
+                  'grid size-6 shrink-0 place-items-center text-[11px] font-bold transition-colors duration-500',
+                  step.done
+                    ? cn(TONE[step.id].fill, TONE[step.id].text)
+                    : step.id === next
+                      ? 'border-2 border-line-strong text-ink'
+                      : 'bg-surface-highest text-ink-subtle',
                   justDone.has(step.id) && 'step-confirmed',
                 )}
               >
-                {step.done && <Check className="size-3 text-zinc-950" strokeWidth={3} aria-hidden />}
+                {step.done ? <Check className="size-3.5" strokeWidth={3} aria-hidden /> : index + 1}
               </span>
-              {index < steps.length - 1 && (
-                <span aria-hidden className="mx-2 hidden h-px flex-1 bg-zinc-800 sm:block">
-                  <span
-                    className={cn(
-                      'block h-px origin-left bg-zinc-500 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]',
-                      step.done ? 'scale-x-100' : 'scale-x-0',
-                    )}
-                  />
-                </span>
-              )}
-            </div>
-            <span
-              className={cn(
-                'text-sm leading-snug transition-colors duration-500 sm:pr-4',
-                step.done ? 'text-zinc-200' : step.id === next ? 'text-zinc-300' : 'text-zinc-500',
-              )}
-            >
-              {step.label}
+              <span
+                className={cn(
+                  'text-sm leading-snug transition-colors duration-500',
+                  step.done ? 'font-medium text-ink' : step.id === next ? 'text-ink' : 'text-ink-subtle',
+                )}
+              >
+                {step.label}
+              </span>
             </span>
           </li>
         ))}
       </ol>
-      <p className="max-w-2xl text-sm text-zinc-400" data-testid="lab-message" aria-live="polite">
+      <p className="max-w-2xl text-sm text-ink-muted" data-testid="lab-message" aria-live="polite">
         {message}
       </p>
     </section>

@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { Badge, Button, Card, CodeBlock, StatusChip } from '../components/ui'
+import { Badge, Button, Card, CodeBlock, fieldClass, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson } from '../services/api'
 import type { DemoProps } from './types'
@@ -101,17 +101,17 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
     onActivity()
   }
 
-  const input = 'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm'
+  const input = fieldClass
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
         <form onSubmit={onLogin} className="grid gap-3 sm:grid-cols-2">
           <label>
-            <span className="mb-1 block text-xs text-zinc-500">{t('auth.user')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('auth.user')}</span>
             <input className={input} value={username} onChange={(e) => setUsername(e.target.value)} data-testid="auth-user" autoComplete="off" />
           </label>
           <label>
-            <span className="mb-1 block text-xs text-zinc-500">{t('auth.pass')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('auth.pass')}</span>
             <input className={input} value={password} onChange={(e) => setPassword(e.target.value)} data-testid="auth-pass" autoComplete="off" />
           </label>
           <Button type="submit" variant="primary" disabled={busy} className="sm:col-span-2" data-testid="auth-login">
@@ -132,8 +132,8 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
         <Button variant="secondary" onClick={runWordlist} loading={busy} data-testid="auth-wordlist">
           {busy ? t('auth.running') : t('auth.wordlist')}
         </Button>
-        <p className="text-xs text-zinc-500">
-          {t('auth.token')}: <span className="font-mono text-zinc-300" data-testid="auth-token">{token ?? t('auth.none')}</span>
+        <p className="text-xs text-ink-subtle">
+          {t('auth.token')}: <span className="font-mono text-ink-muted" data-testid="auth-token">{token ?? t('auth.none')}</span>
         </p>
         {note && (
           <Badge tone={note.tone} className="whitespace-normal" data-testid="auth-note">
@@ -142,7 +142,7 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
         )}
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-6">
         <h3 className="mb-2 text-sm font-semibold">{t('auth.log')}</h3>
         <CodeBlock className="max-h-80 space-y-1 overflow-y-auto" data-testid="auth-log">
           {log.length === 0 && ' '}

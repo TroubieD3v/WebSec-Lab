@@ -1,58 +1,151 @@
 @import "tailwindcss";
-@import "@fontsource-variable/onest";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
 
 /*
  * WebSec Lab design tokens.
- * Two states drive everything: amber = vulnerable ("alarm"), glacier = fixed ("sealed").
- * The neutral scale replaces Tailwind's zinc and the glacier scale replaces emerald, so every
- * widget picks the palette up without per-component colour edits.
+ *
+ * Palette: Primary #121212 (neutral ink, inverted in the dark theme), Secondary #008542 (fixed /
+ * protected / success), Tertiary #D97706 (vulnerable / attack in progress), Neutral #64748B (surfaces
+ * and text), plus the palette's red for errors and successful exploits. Each role has a tone for text,
+ * a solid fill with its own text colour, and a soft container.
+ *
+ * Dark is the default theme; `html.light` switches every token. Components only use these roles,
+ * never raw colours, so both themes stay in step.
  */
 @theme {
-  --font-sans: "Onest Variable", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-headline: "Manrope Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, Consolas, monospace;
 
-  /* basalt neutrals: cool and dark, text is a warm fog for contrast */
-  --color-zinc-50: #f3f1ec;
-  --color-zinc-100: #e6e4df;
-  --color-zinc-200: #d0cfcc;
-  --color-zinc-300: #b3b5b9;
-  --color-zinc-400: #a2a6ae;
-  --color-zinc-500: #8e939c; /* darkest grey allowed for text: >= 4.5:1 on page, cards and controls */
-  --color-zinc-600: #4a505a; /* borders and decoration only, never text */
-  --color-zinc-700: #333842;
-  --color-zinc-800: #252930;
-  --color-zinc-900: #1a1d22;
-  --color-zinc-950: #121418;
+  --color-canvas: var(--canvas);
+  --color-surface-lowest: var(--surface-lowest);
+  --color-surface-low: var(--surface-low);
+  --color-surface: var(--surface);
+  --color-surface-high: var(--surface-high);
+  --color-surface-highest: var(--surface-highest);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
 
-  /* glacier: fixed / protected / primary */
-  --color-emerald-100: #e3f3fb;
-  --color-emerald-200: #c4e6f6;
-  --color-emerald-300: #a3d7f0;
-  --color-emerald-400: #7cc4e8;
-  --color-emerald-500: #5aaed8;
-  --color-emerald-600: #3f90bb;
-  --color-emerald-700: #2f6f92;
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-inverse: var(--inverse);
+  --color-on-inverse: var(--on-inverse);
+  --color-on-inverse-muted: var(--on-inverse-muted);
 
-  /* amber: vulnerable / attack in progress */
-  --color-amber-200: #f7dcae;
-  --color-amber-300: #f1c37c;
-  --color-amber-400: #e8a33d;
-  --color-amber-500: #d4891f;
+  --color-secondary: var(--secondary);
+  --color-secondary-fill: var(--secondary-fill);
+  --color-on-secondary-fill: var(--on-secondary-fill);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
 
-  /* errors and successful attacks: a muted red, never the brand accent */
-  --color-rose-200: #f6c9c6;
-  --color-rose-300: #ee9d97;
-  --color-rose-400: #e5776f;
-  --color-rose-500: #d35d55;
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-fill: var(--tertiary-fill);
+  --color-on-tertiary-fill: var(--on-tertiary-fill);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
 
+  --color-danger: var(--danger);
+  --color-danger-fill: var(--danger-fill);
+  --color-on-danger-fill: var(--on-danger-fill);
+  --color-danger-container: var(--danger-container);
+  --color-on-danger-container: var(--on-danger-container);
+
+  --radius-card: 1.5rem;
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Dark (default): deep neutral-navy surfaces, light ink, light primary. */
 :root {
   color-scheme: dark;
+  --canvas: #0b1220;
+  --surface-lowest: #070c16;
+  --surface-low: #111a2a;
+  --surface: #162134;
+  --surface-high: #1c293e;
+  --surface-highest: #243249;
+  --ink: #e8eefb;
+  --ink-muted: #b9c7e1;
+  --ink-subtle: #95a2bb; /* darkest grey allowed for text: >= 4.5:1 on every surface */
+  --line: #2a3850;
+  --line-strong: #56647c;
+
+  --primary: #f1f1f1;
+  --primary-hover: #ffffff;
+  --on-primary: #121212;
+  --inverse: #d5e3fd;
+  --on-inverse: #0f1c2f;
+  --on-inverse-muted: #3a475d;
+
+  --secondary: #6fda8d;
+  --secondary-fill: #4fbe74;
+  --on-secondary-fill: #00210c;
+  --secondary-container: #0d3a21;
+  --on-secondary-container: #a6f5b8;
+
+  --tertiary: #ffb780;
+  --tertiary-fill: #ff9233;
+  --on-tertiary-fill: #2e1500;
+  --tertiary-container: #4a2600;
+  --on-tertiary-container: #ffdcc4;
+
+  --danger: #ffb4ab;
+  --danger-fill: #ff8a80;
+  --on-danger-fill: #410002;
+  --danger-container: #5c0a0a;
+  --on-danger-container: #ffdad6;
+
+  --card-shadow: none;
   --aura-vulnerable: 0;
   --aura-fixed: 0;
+}
+
+/* Light: the palette's periwinkle surfaces, navy ink, black primary. */
+html.light {
+  color-scheme: light;
+  --canvas: #f8f9ff;
+  --surface-lowest: #ffffff;
+  --surface-low: #eff4ff;
+  --surface: #e5eeff;
+  --surface-high: #dce9ff;
+  --surface-highest: #d3e2fd;
+  --ink: #0b1c30;
+  --ink-muted: #3a475d;
+  --ink-subtle: #526077;
+  --line: #c4d2ea;
+  --line-strong: #8491aa;
+
+  --primary: #121212;
+  --primary-hover: #303030;
+  --on-primary: #ffffff;
+  --inverse: #1f2f45;
+  --on-inverse: #eaf1ff;
+  --on-inverse-muted: #b9c7e1;
+
+  --secondary: #006d33;
+  --secondary-fill: #008542;
+  --on-secondary-fill: #ffffff;
+  --secondary-container: #c6f6d1;
+  --on-secondary-container: #00391a;
+
+  --tertiary: #8e4e00;
+  --tertiary-fill: #d97706;
+  --on-tertiary-fill: #1b0c00;
+  --tertiary-container: #ffdcc4;
+  --on-tertiary-container: #4c2700;
+
+  --danger: #ba1a1a;
+  --danger-fill: #c41e1e;
+  --on-danger-fill: #ffffff;
+  --danger-container: #ffdad6;
+  --on-danger-container: #690005;
+
+  --card-shadow: 0 1px 2px rgb(11 28 48 / 0.04), 0 14px 30px -20px rgb(11 28 48 / 0.18);
 }
 
 /* The lab page sets data-mode on <html>; the aura is the "temperature" of the whole screen. */
@@ -64,9 +157,9 @@ html[data-mode="fixed"] {
 }
 
 body {
-  @apply bg-zinc-950 font-sans text-zinc-100 antialiased;
-  font-feature-settings: "ss01", "cv11";
+  @apply bg-canvas font-sans text-ink antialiased;
   font-optical-sizing: auto;
+  transition: background-color 300ms ease;
 }
 
 body::before,
@@ -79,29 +172,37 @@ body::after {
   transition: opacity 900ms var(--ease-out-quint);
 }
 body::before {
-  background: radial-gradient(70rem 36rem at 80% -12%, rgb(232 163 61 / 0.13), transparent 70%);
+  background: radial-gradient(60rem 32rem at 85% -10%, color-mix(in oklab, var(--tertiary-fill) 16%, transparent), transparent 70%);
   opacity: var(--aura-vulnerable);
 }
 body::after {
-  background: radial-gradient(70rem 36rem at 80% -12%, rgb(124 196 232 / 0.12), transparent 70%);
+  background: radial-gradient(60rem 32rem at 85% -10%, color-mix(in oklab, var(--secondary-fill) 16%, transparent), transparent 70%);
   opacity: var(--aura-fixed);
 }
 
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-headline);
+}
+
 ::selection {
-  background: rgb(124 196 232 / 0.3);
+  background: color-mix(in oklab, var(--secondary-fill) 35%, transparent);
 }
 
 code.inline {
-  @apply rounded-md bg-zinc-800 px-1.5 py-0.5 font-mono text-[0.84em] text-zinc-100;
+  @apply bg-surface-highest px-1.5 py-0.5 font-mono text-[0.84em] text-ink;
 }
 
 :focus-visible {
-  @apply outline-2 outline-offset-2 outline-emerald-400;
+  outline: 2px solid var(--secondary-fill);
+  outline-offset: 2px;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-zinc-700) transparent;
+  scrollbar-color: var(--line-strong) transparent;
 }
 
 pre,
@@ -109,6 +210,27 @@ code,
 input,
 textarea {
   font-variant-ligatures: none;
+}
+
+/* Cards: the one rounded shape. Controls stay square, as in the palette. */
+.card {
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+}
+
+/* Soft colour bloom in a card corner (EcoSync-style), tinted by the role passed in --glow. */
+.glow::before {
+  content: "";
+  position: absolute;
+  top: -5rem;
+  right: -5rem;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--glow, var(--secondary-fill)) 22%, transparent);
+  filter: blur(48px);
+  pointer-events: none;
+  transition: opacity 700ms var(--ease-out-quint);
 }
 
 /* --- motion ------------------------------------------------------------------------------
@@ -132,7 +254,7 @@ textarea {
 .seal-sweep {
   position: absolute;
   inset: auto 0 0 0;
-  height: 1px;
+  height: 2px;
   overflow: hidden;
   pointer-events: none;
 }
@@ -190,17 +312,27 @@ textarea {
   animation: fade-in 220ms ease-out both;
 }
 
-/* Dashboard: the single load sequence. Each pip the learner has earned fills in, in order. */
-@keyframes pip-fill {
+/* Dashboard: the single load sequence. The dial rings draw in, then earned step bars fill, in order. */
+@keyframes bar-fill {
   from {
-    transform: scale(0);
+    transform: scaleX(0);
   }
   to {
-    transform: scale(1);
+    transform: scaleX(1);
   }
 }
-.pip-fill {
-  animation: pip-fill 520ms var(--ease-out-quint) both;
+.bar-fill {
+  transform-origin: left;
+  animation: bar-fill 520ms var(--ease-out-quint) both;
+}
+
+@keyframes dial-draw {
+  from {
+    stroke-dashoffset: var(--dial-length);
+  }
+}
+.dial-draw {
+  animation: dial-draw 1200ms var(--ease-out-quint) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

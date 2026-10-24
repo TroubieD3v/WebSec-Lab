@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge, Button, Card, CodeBlock, RadioPills, StatusChip } from '../components/ui'
+import { Badge, Button, Card, CodeBlock, fieldBase, RadioPills, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson, type LabResponse } from '../services/api'
 import type { DemoProps } from './types'
@@ -37,8 +37,8 @@ export function IdorDemo({ mode, onActivity }: DemoProps) {
   const denied = last && last.response.status === 403
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
         <div>
           <RadioPills
             name="idor-persona"
@@ -47,14 +47,14 @@ export function IdorDemo({ mode, onActivity }: DemoProps) {
             onChange={setPersona}
             options={(Object.keys(PERSONAS) as Persona[]).map((p) => ({ value: p, label: PERSONAS[p].label, testId: `persona-${p}` }))}
           />
-          <p className="mt-2 font-mono text-xs text-zinc-500">
+          <p className="mt-2 font-mono text-xs text-ink-subtle">
             Authorization: Bearer {PERSONAS[persona].token}
           </p>
         </div>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('idor.id')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('idor.id')}</span>
           <input
-            className="w-40 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm"
+            className={`w-40 text-sm ${fieldBase}`}
             value={bookingId}
             onChange={(e) => setBookingId(e.target.value)}
             inputMode="numeric"
@@ -69,10 +69,10 @@ export function IdorDemo({ mode, onActivity }: DemoProps) {
             {t('idor.mine')}
           </Button>
         </div>
-        <p className="text-xs text-zinc-500">{t('idor.hint')}</p>
+        <p className="text-xs text-ink-subtle">{t('idor.hint')}</p>
       </Card>
 
-      <Card className="space-y-3 p-4" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
         {last && (
           <>
             <div className="flex items-center gap-2">

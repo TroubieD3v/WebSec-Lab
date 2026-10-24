@@ -1,14 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Send, Trash2 } from 'lucide-react'
 import { SandboxPreview } from '../components/SandboxPreview'
-import { Button, Card } from '../components/ui'
+import { Button, Card, chipClass, fieldClass } from '../components/ui'
 import { useI18n } from '../i18n'
 import { LABS_ORIGIN, labRequest } from '../services/api'
 import type { DemoProps } from './types'
 
 const LAB = 'stored-xss'
 const PAYLOADS = ['<b>bold</b>', '<img src=x onerror=alert(1)>']
-const input = 'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm'
+const input = fieldClass
 
 export function StoredXssDemo({ mode, onActivity }: DemoProps) {
   const { t } = useI18n()
@@ -49,15 +49,15 @@ export function StoredXssDemo({ mode, onActivity }: DemoProps) {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
         <form onSubmit={post} className="space-y-3">
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">{t('sxss.author')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('sxss.author')}</span>
             <input className={input} value={author} onChange={(e) => setAuthor(e.target.value)} data-testid="sxss-author" maxLength={40} autoComplete="off" />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">{t('sxss.text')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('sxss.text')}</span>
             <textarea className={input} rows={3} value={text} onChange={(e) => setText(e.target.value)} data-testid="sxss-text" maxLength={500} spellCheck={false} />
           </label>
           <div className="flex flex-wrap gap-2">
@@ -70,21 +70,21 @@ export function StoredXssDemo({ mode, onActivity }: DemoProps) {
           </div>
         </form>
         <div>
-          <span className="mb-1.5 block text-xs text-zinc-500">{t('xss.payloads')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('xss.payloads')}</span>
           <div className="flex flex-wrap gap-2">
             {PAYLOADS.map((payload) => (
               <button
                 type="button"
                 key={payload}
                 onClick={() => setText(payload)}
-                className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 font-mono text-xs text-zinc-200 hover:bg-zinc-700"
+                className={`${chipClass} font-mono`}
               >
                 {payload}
               </button>
             ))}
           </div>
         </div>
-        <p className="text-xs text-zinc-500">{t('xss.note')}</p>
+        <p className="text-xs text-ink-subtle">{t('xss.note')}</p>
       </Card>
       <SandboxPreview src={src} labId={LAB} onActivity={onActivity} />
     </div>

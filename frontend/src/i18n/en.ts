@@ -4,6 +4,9 @@ export const en = {
   'nav.labs': 'Labs',
   'nav.progress': 'Progress',
   'badge.local': 'Local Lab',
+  'nav.main': 'Main',
+  'theme.toLight': 'Switch to the light theme',
+  'theme.toDark': 'Switch to the dark theme',
   'footer.warning':
     'Intentionally vulnerable training environment. Run it only on 127.0.0.1 and never expose it to a network.',
   'common.loading': 'Loading…',
@@ -36,6 +39,12 @@ export const en = {
   'pip.defend.long': 'Watch the fix block the same attack',
   'pip.verify.long': 'Run the automatic verification',
   'dash.roadmap': 'On the roadmap',
+  'dash.badge': 'OWASP Top 10:2025',
+  'dash.dial': 'labs completed',
+  'dash.next': 'Next up',
+  'dash.nextStart': 'Start here: exploit the vulnerable version, then watch the fix stop the same attack.',
+  'dash.allDone': 'Every lab is complete. Open any of them again to compare the code or rerun the checks.',
+  'dash.steps': 'Steps across all labs',
 
   'lab.open': 'Start lab',
   'lab.continue': 'Continue',
@@ -107,6 +116,8 @@ export const en = {
   'verify.you': 'You exploited it yourself',
   'verify.defended': 'You saw the fix block your attack',
   'verify.completed': 'Lab completed!',
+  'verify.badgePass': 'All checks pass',
+  'verify.badgeFail': 'Some checks failed',
   'verify.needSteps':
     'All checks pass. The lab completes once you have exploited the Vulnerable mode yourself and repeated that attack in Fixed mode.',
   'verify.failed': 'Some checks failed. See the details below.',

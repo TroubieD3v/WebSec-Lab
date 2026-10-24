@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Badge, Button, Card, CodeBlock, StatusChip } from '../components/ui'
+import { Badge, Button, Card, CodeBlock, fieldBase, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson } from '../services/api'
 import type { DemoProps } from './types'
 
 const LAB = 'csrf'
 const JSON_HEADERS = { 'Content-Type': 'application/json' }
-const field = 'rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm'
+const field = `text-sm ${fieldBase}`
 
 interface Snapshot {
   bank_status: number
@@ -69,11 +69,11 @@ export function CsrfDemo({ mode, onActivity }: DemoProps) {
   const detail = last ? String((last.snap.bank_response as { detail?: string }).detail ?? '') : ''
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
         <h3 className="text-sm font-semibold">{t('csrf.bank')}</h3>
         <table className="w-full text-left text-sm" data-testid="csrf-ledger">
-          <tbody className="divide-y divide-zinc-800">
+          <tbody className="divide-y divide-line">
             {Object.entries(ledger ?? {}).map(([name, balance]) => (
               <tr key={name}>
                 <td className="py-1.5 capitalize">{name}</td>
@@ -84,14 +84,14 @@ export function CsrfDemo({ mode, onActivity }: DemoProps) {
         </table>
         <div className="flex flex-wrap items-end gap-2">
           <label>
-            <span className="mb-1 block text-xs text-zinc-500">{t('csrf.to')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('csrf.to')}</span>
             <select className={field} value={to} onChange={(e) => setTo(e.target.value)} data-testid="csrf-to">
               <option>bob</option>
               <option>mallory</option>
             </select>
           </label>
           <label>
-            <span className="mb-1 block text-xs text-zinc-500">{t('csrf.amount')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('csrf.amount')}</span>
             <input className={`${field} w-24`} value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="numeric" data-testid="csrf-amount" />
           </label>
           <Button variant="primary" onClick={() => run('bank')} disabled={busy} data-testid="csrf-transfer">
@@ -101,23 +101,23 @@ export function CsrfDemo({ mode, onActivity }: DemoProps) {
         <Button variant="ghost" onClick={reset} disabled={busy} data-testid="csrf-reset">
           {t('csrf.reset')}
         </Button>
-        <p className="text-xs text-zinc-500">{t('csrf.note')}</p>
+        <p className="text-xs text-ink-subtle">{t('csrf.note')}</p>
       </Card>
 
-      <Card className="space-y-4 p-4">
-        <h3 className="text-sm font-semibold text-rose-300">{t('csrf.evil')}</h3>
-        <CodeBlock className="whitespace-pre text-zinc-400">{attackerHtml}</CodeBlock>
+      <Card className="space-y-5 p-6">
+        <h3 className="text-sm font-semibold text-danger">{t('csrf.evil')}</h3>
+        <CodeBlock className="whitespace-pre text-ink-muted">{attackerHtml}</CodeBlock>
         <div className="flex flex-wrap items-end gap-2">
           <label>
-            <span className="mb-1 block text-xs text-zinc-500">{t('csrf.to')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('csrf.to')}</span>
             <input className={`${field} w-32`} value={evilTo} onChange={(e) => setEvilTo(e.target.value)} data-testid="csrf-evil-to" />
           </label>
           <label>
-            <span className="mb-1 block text-xs text-zinc-500">{t('csrf.amount')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('csrf.amount')}</span>
             <input className={`${field} w-24`} value={evilAmount} onChange={(e) => setEvilAmount(e.target.value)} inputMode="numeric" data-testid="csrf-evil-amount" />
           </label>
         </div>
-        <label className="flex items-center gap-2 text-xs text-zinc-400">
+        <label className="flex items-center gap-2 text-xs text-ink-muted">
           <input type="checkbox" checked={strip} onChange={(e) => setStrip(e.target.checked)} data-testid="csrf-strip" /> {t('csrf.strip')}
         </label>
         <Button variant="danger" onClick={() => run('attacker')} disabled={busy} data-testid="csrf-attack">

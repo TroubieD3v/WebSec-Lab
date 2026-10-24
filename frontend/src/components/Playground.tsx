@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Check, Copy, Send } from 'lucide-react'
 import { useI18n } from '../i18n'
 import { labRequest, labUrl, tryJson, type LabResponse, type Mode, type Preset } from '../services/api'
-import { Button, Card, CodeBlock, StatusChip } from './ui'
+import { Button, Card, chipClass, CodeBlock, fieldClass, StatusChip } from './ui'
 
 const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
@@ -20,8 +20,7 @@ const formatHeaders = (headers: Record<string, string>) =>
     .map(([k, v]) => `${k}: ${v}`)
     .join('\n')
 
-const field =
-  'w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 placeholder:text-zinc-500'
+const field = fieldClass
 
 interface Props {
   labId: string
@@ -85,17 +84,17 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
     : (response?.headers.filter(([k]) => /^(retry-after|content-type)/i.test(k)) ?? [])
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
-        <p className="text-xs text-zinc-400">{t('pg.intro')}</p>
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
+        <p className="text-xs text-ink-muted">{t('pg.intro')}</p>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-zinc-500">{t('pg.presets')}:</span>
+          <span className="text-xs text-ink-subtle">{t('pg.presets')}:</span>
           {presets.map((preset) => (
             <button
               type="button"
               key={preset.label}
               onClick={() => applyPreset(preset)}
-              className="cursor-pointer rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-700"
+              className={chipClass}
             >
               {preset.label}
             </button>
@@ -103,7 +102,7 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
         </div>
         <div className="flex gap-2">
           <label className="w-28 shrink-0">
-            <span className="mb-1 block text-xs text-zinc-500">{t('pg.method')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('pg.method')}</span>
             <select className={field} value={method} onChange={(e) => setMethod(e.target.value)} aria-label={t('pg.method')}>
               {METHODS.map((m) => (
                 <option key={m}>{m}</option>
@@ -111,13 +110,13 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
             </select>
           </label>
           <label className="min-w-0 flex-1">
-            <span className="mb-1 block text-xs text-zinc-500">{t('pg.path')}</span>
-            <div className="flex items-center rounded-lg border border-zinc-700 bg-zinc-950 pl-3 font-mono text-sm">
-              <span className="truncate text-zinc-500">
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('pg.path')}</span>
+            <div className="flex items-center border border-line bg-surface-lowest pl-3 font-mono text-sm transition-colors focus-within:border-line-strong focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-secondary-fill">
+              <span className="truncate text-ink-subtle">
                 /api/labs/{labId}/{mode}/
               </span>
               <input
-                className="min-w-0 flex-1 bg-transparent px-1 py-2 text-zinc-100 outline-none"
+                className="min-w-0 flex-1 bg-transparent px-1 py-2.5 text-ink outline-none"
                 value={path}
                 onChange={(e) => setPath(e.target.value)}
                 aria-label={t('pg.path')}
@@ -127,11 +126,11 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
           </label>
         </div>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('pg.headers')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('pg.headers')}</span>
           <textarea className={field} rows={3} value={headers} onChange={(e) => setHeaders(e.target.value)} spellCheck={false} />
         </label>
         <label className="block">
-          <span className="mb-1 block text-xs text-zinc-500">{t('pg.body')}</span>
+          <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('pg.body')}</span>
           <textarea className={field} rows={3} value={body} onChange={(e) => setBody(e.target.value)} spellCheck={false} />
         </label>
         <div className="flex gap-2">
@@ -145,17 +144,17 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
         </div>
       </Card>
 
-      <Card className="space-y-3 p-4" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
         <h3 className="text-sm font-semibold">{t('pg.response')}</h3>
-        {error && <p className="text-sm text-rose-300">{error}</p>}
-        {!response && !error && <p className="text-sm text-zinc-500">{t('pg.noResponse')}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
+        {!response && !error && <p className="text-sm text-ink-subtle">{t('pg.noResponse')}</p>}
         {response && (
           <>
-            <div className="flex items-center gap-2 text-xs text-zinc-400">
+            <div className="flex items-center gap-2 text-xs text-ink-muted">
               <StatusChip status={response.status} data-testid="pg-status" />
               <span>{response.ms} ms</span>
             </div>
-            <CodeBlock className="text-zinc-400">
+            <CodeBlock className="text-ink-muted">
               {interesting.map(([k, v]) => `${k}: ${v}`).join('\n')}
             </CodeBlock>
             <CodeBlock className="max-h-96 break-words whitespace-pre-wrap" data-testid="pg-body">

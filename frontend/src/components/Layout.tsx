@@ -1,12 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { ShieldCheck, TriangleAlert } from 'lucide-react'
+import { ChartColumn, LayoutGrid, Moon, ShieldCheck, Sun, TriangleAlert, type LucideIcon } from 'lucide-react'
 import { useI18n, type Lang } from '../i18n'
+import { useTheme } from '../theme'
 import { cn } from './ui'
 
 function LangSwitch() {
   const { lang, setLang } = useI18n()
   return (
-    <fieldset className="flex rounded-lg border border-zinc-800 p-0.5">
+    <fieldset className="flex bg-surface-low p-1">
       <legend className="sr-only">Language / Язык</legend>
       {(['en', 'ru'] as Lang[]).map((l) => (
         <button
@@ -15,8 +16,8 @@ function LangSwitch() {
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
           className={cn(
-            'cursor-pointer rounded-md px-2.5 py-1 text-xs font-semibold uppercase transition-colors',
-            lang === l ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-400 hover:text-zinc-100',
+            'cursor-pointer px-2.5 py-1.5 text-xs font-bold uppercase transition-colors',
+            lang === l ? 'bg-primary text-on-primary' : 'text-ink-muted hover:text-ink',
           )}
         >
           {l}
@@ -26,47 +27,87 @@ function LangSwitch() {
   )
 }
 
+function ThemeToggle() {
+  const { t } = useI18n()
+  const [theme, toggle] = useTheme()
+  const Icon = theme === 'dark' ? Sun : Moon
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === 'dark' ? t('theme.toLight') : t('theme.toDark')}
+      title={theme === 'dark' ? t('theme.toLight') : t('theme.toDark')}
+      data-testid="theme-toggle"
+      data-theme={theme}
+      className="grid size-10 cursor-pointer place-items-center bg-surface-low text-ink transition-colors hover:bg-surface-high"
+    >
+      <Icon className="size-[18px]" aria-hidden />
+    </button>
+  )
+}
+
+function NavItem({ to, end, icon: Icon, label }: { to: string; end?: boolean; icon: LucideIcon; label: string }) {
+  return (
+    <NavLink
+      to={to}
+      end={end}
+      className={({ isActive }) =>
+        cn(
+          'group flex flex-1 flex-col items-center gap-1 text-[11px] font-semibold transition-colors sm:flex-none sm:flex-row sm:gap-2 sm:px-4 sm:py-2 sm:text-sm',
+          isActive ? 'text-ink sm:bg-primary sm:text-on-primary' : 'text-ink-subtle hover:text-ink',
+        )
+      }
+    >
+      {({ isActive }) => (
+        <>
+          {/* On phones the active item gets the palette's square icon tile. */}
+          <span className={cn('grid size-10 place-items-center sm:size-auto', isActive && 'bg-primary text-on-primary sm:bg-transparent sm:text-inherit')}>
+            <Icon className="size-5 sm:size-4" aria-hidden />
+          </span>
+          {label}
+        </>
+      )}
+    </NavLink>
+  )
+}
+
 export function Layout() {
   const { t } = useI18n()
-  const link = ({ isActive }: { isActive: boolean }) =>
-    cn(
-      'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-      isActive ? 'bg-zinc-800 text-zinc-50' : 'text-zinc-400 hover:text-zinc-100',
-    )
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-20 border-b border-zinc-900 bg-zinc-950/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6">
-          <NavLink to="/" className="flex shrink-0 items-center gap-2.5">
-            <ShieldCheck className="size-6 text-emerald-400" aria-hidden />
-            <span className="sr-only leading-tight sm:not-sr-only sm:block">
-              <span className="block text-sm font-semibold tracking-tight">{t('app.name')}</span>
-              <span className="block text-[11px] text-zinc-500">{t('app.tagline')}</span>
+      <header className="sticky top-0 z-30">
+        {/* The blur lives on its own layer: backdrop-filter on the header would trap the fixed phone nav inside it. */}
+        <div aria-hidden className="absolute inset-0 -z-10 border-b border-line/60 bg-canvas/80 backdrop-blur-xl" />
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6 sm:px-6">
+          <NavLink to="/" className="flex shrink-0 items-center gap-3">
+            <span className="grid size-10 place-items-center bg-primary text-on-primary">
+              <ShieldCheck className="size-5" aria-hidden />
+            </span>
+            <span className="leading-tight">
+              <span className="block font-headline text-base font-bold tracking-tight">{t('app.name')}</span>
+              <span className="hidden text-[11px] text-ink-subtle md:block">{t('app.tagline')}</span>
             </span>
           </NavLink>
-          <nav className="flex min-w-0 gap-1">
-            <NavLink to="/" end className={link}>
-              {t('nav.labs')}
-            </NavLink>
-            <NavLink to="/progress" className={link}>
-              {t('nav.progress')}
-            </NavLink>
+          <nav
+            aria-label={t('nav.main')}
+            className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-line/60 bg-canvas/90 px-6 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:static sm:mx-auto sm:justify-start sm:gap-1 sm:border-0 sm:bg-surface-low sm:p-1 sm:backdrop-blur-none"
+          >
+            <NavItem to="/" end icon={LayoutGrid} label={t('nav.labs')} />
+            <NavItem to="/progress" icon={ChartColumn} label={t('nav.progress')} />
           </nav>
-          <div className="ml-auto flex items-center gap-3">
-            {/* Wrapped: Badge's own inline-flex would override a `hidden` class on the badge itself. */}
-            <span className="hidden items-center gap-2 text-xs text-zinc-500 md:flex">
-              <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> {t('badge.local')}
-            </span>
+          <div className="ml-auto flex items-center gap-2 sm:ml-0">
+            <ThemeToggle />
             <LangSwitch />
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-8 pb-28 sm:px-6 sm:pb-12">
         <Outlet />
       </main>
-      <footer className="border-t border-zinc-800/80 py-4">
-        <p className="mx-auto flex max-w-6xl items-center gap-2 px-4 text-xs text-zinc-500">
-          <TriangleAlert className="size-3.5 shrink-0 text-amber-400" aria-hidden /> {t('footer.warning')}
+      <footer className="mx-auto w-full max-w-6xl px-4 pb-28 sm:px-6 sm:pb-8">
+        <div aria-hidden className="mb-6 h-px bg-gradient-to-r from-transparent via-line-strong/50 to-transparent" />
+        <p className="flex items-center justify-center gap-2 text-center text-xs text-ink-subtle">
+          <TriangleAlert className="size-3.5 shrink-0 text-tertiary" aria-hidden /> {t('footer.warning')}
         </p>
       </footer>
     </div>

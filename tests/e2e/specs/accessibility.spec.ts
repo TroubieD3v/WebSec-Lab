@@ -18,43 +18,60 @@ async function audit(page: Page, where: string) {
   expect(summary, where).toEqual([])
 }
 
-test('dashboard and progress pass WCAG 2.1 AA in both languages', async ({ page }) => {
-  for (const lang of ['en', 'ru']) {
-    await page.addInitScript((l) => localStorage.setItem('websec-lang', l), lang)
-    await page.goto('/')
-    await page.getByTestId('stat-labs').waitFor()
-    await audit(page, `dashboard/${lang}`)
-    await page.goto('/progress')
-    await page.getByTestId('reset-progress').waitFor()
-    await audit(page, `progress/${lang}`)
+test('dashboard and progress pass WCAG 2.1 AA in both languages and both themes', async ({ page }) => {
+  for (const theme of ['dark', 'light']) {
+    for (const lang of ['en', 'ru']) {
+      await page.addInitScript(
+        ([l, th]) => {
+          localStorage.setItem('websec-lang', l)
+          localStorage.setItem('websec-theme', th)
+        },
+        [lang, theme],
+      )
+      await page.goto('/')
+      await page.getByTestId('stat-labs').waitFor()
+      await audit(page, `dashboard/${theme}/${lang}`)
+      await page.goto('/progress')
+      await page.getByTestId('reset-progress').waitFor()
+      await audit(page, `progress/${theme}/${lang}`)
+    }
   }
 })
 
-test('every lab passes WCAG 2.1 AA on every tab, in both modes', async ({ page }) => {
-  test.setTimeout(240_000)
-  for (const lab of LABS) {
-    await page.goto(`/labs/${lab}`)
-    for (const mode of ['vulnerable', 'fixed']) {
-      await page.getByTestId(`mode-${mode}`).click()
-      await page.getByTestId('tab-try').click()
-      await audit(page, `${lab}/${mode}/try`)
-    }
-    await page.getByTestId('tab-playground').click()
-    await page.getByTestId('pg-send').click()
-    await page.getByTestId('pg-status').waitFor()
-    await audit(page, `${lab}/playground`)
-    await page.getByTestId('tab-code').click()
-    await page.getByTestId('code-diff').waitFor()
-    await audit(page, `${lab}/code`)
-    await page.getByTestId('tab-hints').click()
-    await audit(page, `${lab}/hints`)
-    await page.getByTestId('tab-verify').click()
-    await page.getByTestId('verify-run').click()
-    await page.getByTestId('verify-summary').waitFor()
-    await audit(page, `${lab}/verify`)
-    await page.getByTestId('tab-learn').click()
-    await audit(page, `${lab}/learn`)
+async function auditLab(page: Page, lab: string, theme: string) {
+  await page.goto(`/labs/${lab}`)
+  for (const mode of ['vulnerable', 'fixed']) {
+    await page.getByTestId(`mode-${mode}`).click()
+    await page.getByTestId('tab-try').click()
+    await audit(page, `${lab}/${theme}/${mode}/try`)
   }
+  await page.getByTestId('tab-playground').click()
+  await page.getByTestId('pg-send').click()
+  await page.getByTestId('pg-status').waitFor()
+  await audit(page, `${lab}/${theme}/playground`)
+  await page.getByTestId('tab-code').click()
+  await page.getByTestId('code-diff').waitFor()
+  await audit(page, `${lab}/${theme}/code`)
+  await page.getByTestId('tab-hints').click()
+  await audit(page, `${lab}/${theme}/hints`)
+  await page.getByTestId('tab-verify').click()
+  await page.getByTestId('verify-run').click()
+  await page.getByTestId('verify-summary').waitFor()
+  await audit(page, `${lab}/${theme}/verify`)
+  await page.getByTestId('tab-learn').click()
+  await audit(page, `${lab}/${theme}/learn`)
+}
+
+test('every lab passes WCAG 2.1 AA on every tab, in both modes (dark theme)', async ({ page }) => {
+  test.setTimeout(240_000)
+  for (const lab of LABS) await auditLab(page, lab, 'dark')
+})
+
+// Colour roles are shared by every lab, so a sample covers the light palette.
+test('labs pass WCAG 2.1 AA in the light theme', async ({ page }) => {
+  test.setTimeout(120_000)
+  await page.addInitScript(() => localStorage.setItem('websec-theme', 'light'))
+  for (const lab of ['sql-injection', 'xss', 'csrf', 'race-condition']) await auditLab(page, lab, 'light')
 })
 
 test('the mode switch works from the keyboard', async ({ page }) => {

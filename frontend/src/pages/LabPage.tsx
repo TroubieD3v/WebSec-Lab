@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, CodeXml } from 'lucide-react'
 import { CodeDiff } from '../components/CodeDiff'
 import { HintsPanel } from '../components/HintsPanel'
 import { LabProgressTracker } from '../components/LabProgressTracker'
@@ -8,8 +8,9 @@ import { LearnPanel } from '../components/LearnPanel'
 import { ModeToggle } from '../components/ModeToggle'
 import { Playground } from '../components/Playground'
 import { VerifyPanel } from '../components/VerifyPanel'
-import { ErrorBox, Inline, Spinner, StatusBadge, cn } from '../components/ui'
+import { Badge, Card, DifficultyBadge, ErrorBox, Eyebrow, IconTile, Inline, Spinner, StatusBadge, cn } from '../components/ui'
 import { DEMOS } from '../labs'
+import { LAB_ICONS } from '../labs/icons'
 import { useI18n } from '../i18n'
 import { api, type LabDetail, type LabProgress, type Mode } from '../services/api'
 
@@ -60,49 +61,56 @@ export function LabPage() {
   if (!lab) return <Spinner />
 
   const Demo = DEMOS[lab.id]
+  const modeFill = mode === 'fixed' ? 'var(--secondary-fill)' : 'var(--tertiary-fill)'
   return (
-    <div className="space-y-8">
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-100">
+    <div className="space-y-10">
+      <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-subtle transition-colors hover:text-ink">
         <ArrowLeft className="size-4" aria-hidden /> {t('lab.back')}
       </Link>
 
-      <header className="relative space-y-3 pb-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <h1 className="max-w-3xl text-3xl font-semibold tracking-[-0.02em] text-balance sm:text-4xl">{lab.title}</h1>
-          <span data-testid="lab-status" className="pt-1.5">
-            <StatusBadge status={lab.progress.status} />
-          </span>
+      <header className="relative pb-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+          <IconTile icon={LAB_ICONS[lab.id] ?? CodeXml} tone={mode === 'fixed' ? 'green' : 'amber'} size="lg" />
+          <div className="min-w-0 flex-1 space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge tone="neutral" className="font-mono">
+                {lab.owasp}
+              </Badge>
+              <DifficultyBadge difficulty={lab.difficulty} />
+              <span data-testid="lab-status">
+                <StatusBadge status={lab.progress.status} />
+              </span>
+            </div>
+            <h1 className="max-w-3xl text-4xl leading-[1.05] font-semibold tracking-[-0.035em] text-balance sm:text-5xl">{lab.title}</h1>
+            <p className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-subtle">
+              <span>{lab.owasp_name}</span>
+              <span className="font-mono">{lab.cwe.join(', ')}</span>
+            </p>
+          </div>
         </div>
-        <p className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-500">
-          <span>
-            <span className="text-zinc-300">{lab.owasp}</span> {lab.owasp_name}
-          </span>
-          <span>{t(`difficulty.${lab.difficulty}`)}</span>
-          <span>{lab.cwe.join(', ')}</span>
-        </p>
-        <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-zinc-800" />
-        {sweep > 0 && (
-          <span
-            key={sweep}
-            aria-hidden
-            className="seal-sweep"
-            style={{ ['--sweep-color' as string]: mode === 'fixed' ? 'rgb(124 196 232)' : 'rgb(232 163 61)' }}
-          />
-        )}
+        <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-line" />
+        {sweep > 0 && <span key={sweep} aria-hidden className="seal-sweep" style={{ ['--sweep-color' as string]: modeFill }} />}
       </header>
 
-      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
-        <div className="space-y-6">
-          <p className="max-w-2xl text-[1.05rem] leading-relaxed text-zinc-200">
-            <Inline text={lab.task} />
-          </p>
-          <LabProgressTracker progress={lab.progress} />
-        </div>
-        <ModeToggle mode={mode} onChange={changeMode} />
+      <section className="grid gap-6 lg:grid-cols-12">
+        <Card surface="lowest" className="glow relative space-y-8 overflow-hidden p-6 sm:p-8 lg:col-span-8" style={{ ['--glow' as string]: modeFill }}>
+          <div className="relative space-y-3">
+            <Eyebrow>{t('lab.task')}</Eyebrow>
+            <p className="max-w-2xl text-lg leading-relaxed text-ink">
+              <Inline text={lab.task} />
+            </p>
+          </div>
+          <div className="relative">
+            <LabProgressTracker progress={lab.progress} />
+          </div>
+        </Card>
+        <Card className="p-6 sm:p-8 lg:col-span-4">
+          <ModeToggle mode={mode} onChange={changeMode} />
+        </Card>
       </section>
 
       <div>
-        <div className="flex gap-1 overflow-x-auto border-b border-zinc-800" role="tablist">
+        <div className="inline-flex max-w-full overflow-x-auto bg-surface-low p-1" role="tablist">
           {TABS.map((name) => (
             <button
               type="button"
@@ -112,19 +120,11 @@ export function LabPage() {
               data-testid={`tab-${name}`}
               onClick={() => setTab(name)}
               className={cn(
-                'relative cursor-pointer px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors duration-200',
-                tab === name ? 'text-zinc-50' : 'text-zinc-500 hover:text-zinc-200',
+                'cursor-pointer px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors duration-200',
+                tab === name ? 'bg-primary text-on-primary' : 'text-ink-muted hover:text-ink',
               )}
             >
               {t(`tabs.${name}`)}
-              <span
-                aria-hidden
-                className={cn(
-                  'absolute inset-x-3 -bottom-px h-0.5 rounded-full transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
-                  mode === 'fixed' ? 'bg-emerald-400' : 'bg-amber-400',
-                  tab === name ? 'scale-x-100' : 'scale-x-0',
-                )}
-              />
             </button>
           ))}
         </div>

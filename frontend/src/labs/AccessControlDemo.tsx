@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge, Button, Card, CodeBlock, RadioPills, StatusChip } from '../components/ui'
+import { Badge, Button, Card, CodeBlock, fieldClass, RadioPills, StatusChip } from '../components/ui'
 import { useI18n } from '../i18n'
 import { labRequest, tryJson, type LabResponse } from '../services/api'
 import type { DemoProps } from './types'
@@ -47,8 +47,8 @@ export function AccessControlDemo({ mode, onActivity }: DemoProps) {
   const denied = status === 403 || status === 400
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <Card className="space-y-4 p-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="space-y-5 p-6">
         <div>
           <RadioPills
             name="bac-persona"
@@ -61,11 +61,11 @@ export function AccessControlDemo({ mode, onActivity }: DemoProps) {
         <Button variant="primary" onClick={() => call('admin')} disabled={busy} data-testid="bac-admin">
           {t('bac.admin')}
         </Button>
-        <div className="space-y-2 border-t border-zinc-800 pt-4">
+        <div className="space-y-2 border-t border-line pt-4">
           <label className="block">
-            <span className="mb-1 block text-xs text-zinc-500">{t('bac.body')}</span>
+            <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('bac.body')}</span>
             <textarea
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm"
+              className={fieldClass}
               rows={3}
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -77,10 +77,10 @@ export function AccessControlDemo({ mode, onActivity }: DemoProps) {
             {t('bac.profile')}
           </Button>
         </div>
-        <p className="text-xs text-zinc-500">{t('bac.hint')}</p>
+        <p className="text-xs text-ink-subtle">{t('bac.hint')}</p>
       </Card>
 
-      <Card className="space-y-3 p-4" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
         {result && (
           <>
             <div className="flex flex-wrap items-center gap-2">

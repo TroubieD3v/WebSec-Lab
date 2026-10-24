@@ -4,6 +4,17 @@ All notable changes are documented here. The project follows [Semantic Versionin
 
 ## [Unreleased]
 
+### Changed
+- New design: Manrope headlines and Inter text, square controls, rounded cards, bento layouts, a progress dial on
+  the dashboard, stat tiles, a "next up" card and per-lab step bars. Colour roles come from one palette: primary
+  #121212, secondary #008542 (fixed mode, success), tertiary #D97706 (vulnerable mode, attacks), neutral #64748B.
+- On phones the navigation moves to a bottom bar.
+- README screenshots and the demo GIF show the new design.
+
+### Added
+- A light theme next to the default dark one, switched from the header and remembered across visits (applied
+  before the first paint, so there is no flash). The WCAG 2.1 AA audit now covers both themes.
+
 ### Fixed
 - Race Condition: the parallel attack could fail on a slow or CPU-starved machine because the race window was only
   50 ms (1 burst in 10 did not race with a tenth of a CPU). The window is now 200 ms, and the verifier retries the

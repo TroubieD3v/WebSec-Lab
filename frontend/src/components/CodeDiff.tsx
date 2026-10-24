@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { api, type CodePayload, type CodeRow } from '../services/api'
-import { Card, ErrorBox, Spinner, cn } from './ui'
+import { Card, ErrorBox, Segmented, Spinner, cn } from './ui'
 
 type View = 'diff' | 'vulnerable' | 'fixed'
 
-const cellTone = { same: '', del: 'bg-rose-500/10', add: 'bg-emerald-500/10' } as const
+const cellTone = { same: '', del: 'bg-danger-container/45', add: 'bg-secondary-container/55' } as const
 const marker = { same: ' ', del: '-', add: '+' } as const
 
 function Cell({ line }: { line: CodeRow['left'] | CodeRow['right'] }) {
-  if (!line) return <td colSpan={2} className="bg-zinc-900/40" />
+  if (!line) return <td colSpan={2} className="bg-surface-low" />
   return (
     <>
-      <td className={cn('w-10 select-none px-2 text-right text-zinc-500', cellTone[line.kind])}>{line.n}</td>
-      <td className={cn('px-2 whitespace-pre-wrap [overflow-wrap:anywhere]', cellTone[line.kind], line.kind === 'del' && 'text-rose-200', line.kind === 'add' && 'text-emerald-200')}>
-        <span className="mr-2 select-none text-zinc-500">{marker[line.kind]}</span>
+      <td className={cn('w-10 select-none px-2 text-right text-ink-subtle', cellTone[line.kind])}>{line.n}</td>
+      <td className={cn('px-2 whitespace-pre-wrap [overflow-wrap:anywhere]', cellTone[line.kind], line.kind === 'del' && 'text-on-danger-container', line.kind === 'add' && 'text-on-secondary-container')}>
+        <span className="mr-2 select-none text-ink-subtle">{marker[line.kind]}</span>
         {line.text || ' '}
       </td>
     </>
@@ -45,10 +45,10 @@ function SideBySide({ rows }: { rows: CodeRow[] }) {
   )
 }
 
-function Plain({ code, tone }: { code: string; tone: 'rose' | 'emerald' }) {
+function Plain({ code, tone }: { code: string; tone: 'vulnerable' | 'fixed' }) {
   return (
     // biome-ignore lint/a11y/noNoninteractiveTabindex: long code scrolls; keyboard users need to focus it
-    <pre tabIndex={0} className={cn('overflow-x-auto p-4 font-mono text-xs leading-6', tone === 'rose' ? 'text-rose-100' : 'text-emerald-100')} data-testid="code-plain">
+    <pre tabIndex={0} className={cn('overflow-x-auto border-l-4 p-5 font-mono text-xs leading-6 text-ink', tone === 'vulnerable' ? 'border-tertiary-fill' : 'border-secondary-fill')} data-testid="code-plain">
       {code}
     </pre>
   )
@@ -77,37 +77,21 @@ export function CodeDiff({ labId }: { labId: string }) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="inline-flex rounded-lg border border-zinc-800 bg-zinc-900/60 p-0.5" role="tablist">
-          {tabs.map((tab) => (
-            <button
-              type="button"
-              key={tab.view}
-              role="tab"
-              aria-selected={view === tab.view}
-              onClick={() => setView(tab.view)}
-              className={cn(
-                'cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
-                view === tab.view ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-400 hover:text-zinc-100',
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-zinc-500">{t('code.note', { file: code.file })}</p>
+        <Segmented value={view} onChange={setView} options={tabs.map((tab) => ({ value: tab.view, label: tab.label }))} />
+        <p className="text-xs text-ink-subtle">{t('code.note', { file: code.file })}</p>
       </div>
-      <Card className="overflow-hidden">
+      <Card surface="lowest" className="overflow-hidden">
         {view === 'diff' && (
           <>
-            <div className="grid grid-cols-2 border-b border-zinc-800 text-xs font-medium">
-              <div className="bg-rose-500/10 px-3 py-2 text-rose-300">{t('code.vulnerable')}</div>
-              <div className="bg-emerald-500/10 px-3 py-2 text-emerald-300">{t('code.fixed')}</div>
+            <div className="grid grid-cols-2 border-b border-line text-xs font-bold">
+              <div className="bg-tertiary-container px-4 py-3 text-on-tertiary-container">{t('code.vulnerable')}</div>
+              <div className="bg-secondary-container px-4 py-3 text-on-secondary-container">{t('code.fixed')}</div>
             </div>
             <SideBySide rows={code.rows} />
           </>
         )}
-        {view === 'vulnerable' && <Plain code={code.vulnerable} tone="rose" />}
-        {view === 'fixed' && <Plain code={code.fixed} tone="emerald" />}
+        {view === 'vulnerable' && <Plain code={code.vulnerable} tone="vulnerable" />}
+        {view === 'fixed' && <Plain code={code.fixed} tone="fixed" />}
       </Card>
     </div>
   )

@@ -15,6 +15,9 @@ playground, a side-by-side code diff, hints, and automated checks that *prove* t
 fix works. It is inspired by OWASP Juice Shop and WebGoat, with the emphasis on code comparison, API testing and
 automatic verification.
 
+The interface is dark by default with a light theme one click away (the sun/moon button in the header), and
+available in English and Russian.
+
 > **Warning**: the `labs` service is vulnerable on purpose. Run it only on `127.0.0.1` and never expose it to a
 > network. See [SECURITY.md](SECURITY.md) and the [threat model](docs/threat-model.md).
 
@@ -23,7 +26,9 @@ automatic verification.
 *Alice reads Bob's booking in the vulnerable mode; in the fixed mode the same request is refused and the lab
 records that you saw the fix hold.*
 
-![Dashboard](docs/screenshots/dashboard.png)
+| Dashboard, dark theme (default) | Dashboard, light theme |
+|---|---|
+| ![Dashboard in the dark theme](docs/screenshots/dashboard.png) | ![Dashboard in the light theme](docs/screenshots/dashboard-light.png) |
 
 | Exploit detected automatically | Vulnerable vs. fixed code |
 |---|---|
