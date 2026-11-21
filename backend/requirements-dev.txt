@@ -45,7 +45,7 @@ idna==3.20
     #   httpx
 iniconfig==2.3.1
     # via pytest
-opentelemetry-api==1.45.1
+opentelemetry-api==1.45.2
     # via
     #   -c requirements.txt
     #   fastapi
