@@ -49,7 +49,7 @@ export function SandboxPreview({ src, labId, onActivity }: Props) {
   }, [labId, onActivity])
 
   return (
-    <Card className="space-y-4 p-6">
+    <Card className="space-y-4 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-semibold">{t('xss.preview')}</h3>
         {executed !== null ? (

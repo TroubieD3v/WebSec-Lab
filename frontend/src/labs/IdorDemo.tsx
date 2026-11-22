@@ -37,8 +37,8 @@ export function IdorDemo({ mode, onActivity }: DemoProps) {
   const denied = last && last.response.status === 403
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <div>
           <RadioPills
             name="idor-persona"
@@ -72,7 +72,7 @@ export function IdorDemo({ mode, onActivity }: DemoProps) {
         <p className="text-xs text-ink-subtle">{t('idor.hint')}</p>
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         {last && (
           <>
             <div className="flex items-center gap-2">

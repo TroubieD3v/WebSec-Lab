@@ -35,11 +35,11 @@ export function ProgressPage() {
   const unlocked = data.achievements.filter((a) => a.unlocked).length
   return (
     <div className="space-y-14">
-      <div className="flex flex-wrap items-end justify-between gap-6 pt-2">
+      <div className="flex flex-wrap items-end justify-between gap-4 pt-2">
         <div className="max-w-2xl">
-          <h1 className="text-5xl leading-none font-semibold tracking-[-0.04em] sm:text-6xl">{t('progress.title')}</h1>
+          <h1 className="text-lg leading-none font-semibold sm:text-lg">{t('progress.title')}</h1>
           <p className="mt-5 text-lg text-ink-muted">
-            <span className="font-bold text-secondary tabular-nums">
+            <span className="font-semibold text-secondary tabular-nums">
               {data.completed} / {data.labs_available}
             </span>{' '}
             {t('dash.completedOf.after').trim()}
@@ -58,9 +58,9 @@ export function ProgressPage() {
         <StatTile label={t('progress.stat.hints')} value={data.hints_used} />
       </div>
 
-      <section className="space-y-6">
+      <section className="space-y-4">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight">{t('progress.achievements')}</h2>
+          <h2 className="text-lg font-semibold ">{t('progress.achievements')}</h2>
           <p className="text-sm text-ink-subtle tabular-nums">
             {unlocked}/{data.achievements.length}
           </p>
@@ -68,11 +68,11 @@ export function ProgressPage() {
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.achievements.map((a) => (
             <li key={a.id} data-testid={`achievement-${a.id}`} data-unlocked={a.unlocked}>
-              <Card className={cn('flex h-full gap-4 p-5', a.unlocked && 'bg-surface')}>
+              <Card className={cn('flex h-full gap-4 p-4', a.unlocked && 'bg-surface')}>
                 <IconTile icon={a.unlocked ? Award : Lock} tone={a.unlocked ? 'green' : 'neutral'} />
                 <div className="min-w-0">
                   {/* Locked items are muted with colour, not opacity, so their text keeps AA contrast. */}
-                  <p className={cn('font-headline font-bold', a.unlocked ? 'text-ink' : 'text-ink-muted')}>{a.title}</p>
+                  <p className={cn('font-headline font-semibold', a.unlocked ? 'text-ink' : 'text-ink-muted')}>{a.title}</p>
                   <p className="mt-1 text-sm text-ink-subtle">{a.description}</p>
                 </div>
               </Card>
@@ -81,10 +81,10 @@ export function ProgressPage() {
         </ul>
       </section>
 
-      <section className="space-y-6">
-        <h2 className="text-2xl font-bold tracking-tight">{t('progress.history')}</h2>
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold ">{t('progress.history')}</h2>
         {data.history.length === 0 ? (
-          <Card className="p-6 text-sm text-ink-subtle">{t('progress.empty')}</Card>
+          <Card className="p-4 text-sm text-ink-subtle">{t('progress.empty')}</Card>
         ) : (
           <Card surface="lowest" className="overflow-hidden">
             <ol className="divide-y divide-line">

@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
+import { FileCode2 } from 'lucide-react'
 import { useI18n } from '../i18n'
 import { api, type CodePayload, type CodeRow } from '../services/api'
 import { Card, ErrorBox, Segmented, Spinner, cn } from './ui'
 
 type View = 'diff' | 'vulnerable' | 'fixed'
 
-const cellTone = { same: '', del: 'bg-danger-container/45', add: 'bg-secondary-container/55' } as const
+const cellTone = { same: '', del: 'bg-danger-container', add: 'bg-secondary-container' } as const
 const marker = { same: ' ', del: '-', add: '+' } as const
 
 function Cell({ line }: { line: CodeRow['left'] | CodeRow['right'] }) {
-  if (!line) return <td colSpan={2} className="bg-surface-low" />
+  if (!line) return <td colSpan={2} className="bg-surface [background-image:repeating-linear-gradient(135deg,transparent_0_6px,var(--line)_6px_7px)]" />
   return (
     <>
-      <td className={cn('w-10 select-none px-2 text-right text-ink-subtle', cellTone[line.kind])}>{line.n}</td>
+      <td className={cn('w-10 select-none border-r border-line px-2 text-right text-ink-subtle', cellTone[line.kind])}>{line.n}</td>
       <td className={cn('px-2 whitespace-pre-wrap [overflow-wrap:anywhere]', cellTone[line.kind], line.kind === 'del' && 'text-on-danger-container', line.kind === 'add' && 'text-on-secondary-container')}>
         <span className="mr-2 select-none text-ink-subtle">{marker[line.kind]}</span>
         {line.text || ' '}
@@ -48,7 +49,7 @@ function SideBySide({ rows }: { rows: CodeRow[] }) {
 function Plain({ code, tone }: { code: string; tone: 'vulnerable' | 'fixed' }) {
   return (
     // biome-ignore lint/a11y/noNoninteractiveTabindex: long code scrolls; keyboard users need to focus it
-    <pre tabIndex={0} className={cn('overflow-x-auto border-l-4 p-5 font-mono text-xs leading-6 text-ink', tone === 'vulnerable' ? 'border-tertiary-fill' : 'border-secondary-fill')} data-testid="code-plain">
+    <pre tabIndex={0} className={cn('overflow-x-auto border-l-2 px-4 py-3 font-mono text-xs leading-6 text-ink', tone === 'vulnerable' ? 'border-tertiary-fill' : 'border-secondary-fill')} data-testid="code-plain">
       {code}
     </pre>
   )
@@ -75,17 +76,25 @@ export function CodeDiff({ labId }: { labId: string }) {
     { view: 'fixed', label: t('code.fixed') },
   ]
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Segmented value={view} onChange={setView} options={tabs.map((tab) => ({ value: tab.view, label: tab.label }))} />
-        <p className="text-xs text-ink-subtle">{t('code.note', { file: code.file })}</p>
-      </div>
+    <div className="space-y-2">
+      <p className="text-xs text-ink-subtle">{t('code.note', { file: code.file })}</p>
       <Card surface="lowest" className="overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface px-2 py-1.5">
+          <span className="flex min-w-0 items-center gap-1.5 px-1 font-mono text-xs text-ink-muted">
+            <FileCode2 className="size-3.5 shrink-0 text-ink-subtle" aria-hidden />
+            <span className="truncate">{code.file}</span>
+          </span>
+          <Segmented value={view} onChange={setView} options={tabs.map((tab) => ({ value: tab.view, label: tab.label }))} />
+        </div>
         {view === 'diff' && (
           <>
-            <div className="grid grid-cols-2 border-b border-line text-xs font-bold">
-              <div className="bg-tertiary-container px-4 py-3 text-on-tertiary-container">{t('code.vulnerable')}</div>
-              <div className="bg-secondary-container px-4 py-3 text-on-secondary-container">{t('code.fixed')}</div>
+            <div className="grid grid-cols-2 border-b border-line font-mono text-xs">
+              <div className="flex items-center gap-1.5 border-r border-line px-3 py-1.5 text-tertiary">
+                <span aria-hidden className="size-1.5 rounded-[1px] bg-tertiary-fill" /> {t('code.vulnerable')}
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 text-secondary">
+                <span aria-hidden className="size-1.5 rounded-[1px] bg-secondary-fill" /> {t('code.fixed')}
+              </div>
             </div>
             <SideBySide rows={code.rows} />
           </>

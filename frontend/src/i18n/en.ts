@@ -45,6 +45,12 @@ export const en = {
   'dash.nextStart': 'Start here: exploit the vulnerable version, then watch the fix stop the same attack.',
   'dash.allDone': 'Every lab is complete. Open any of them again to compare the code or rerun the checks.',
   'dash.steps': 'Steps across all labs',
+  'dash.col.lab': 'Lab',
+  'dash.col.level': 'Level',
+  'dash.col.steps': 'Steps',
+  'dash.col.status': 'Status',
+  'dash.catalogue': 'All labs',
+  'dash.solved': '{done}/{total} completed',
 
   'lab.open': 'Start lab',
   'lab.continue': 'Continue',

@@ -37,8 +37,8 @@ export function MisconfigDemo({ mode, onActivity }: DemoProps) {
   const missing = result ? HARDENING.filter((h) => !(h in result.upstream)) : []
   const banners = result ? BANNERS.filter((h) => h in result.upstream) : []
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <div className="space-y-2">
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('mis.order')}</span>
@@ -59,7 +59,7 @@ export function MisconfigDemo({ mode, onActivity }: DemoProps) {
         <p className="text-xs text-ink-subtle">{t('mis.hint')}</p>
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         {result && (
           <>
             <div className="flex flex-wrap items-center gap-2">

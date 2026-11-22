@@ -21,8 +21,8 @@ export function XssDemo({ mode, onActivity }: DemoProps) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <form onSubmit={submit} className="space-y-3">
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('xss.label')}</span>

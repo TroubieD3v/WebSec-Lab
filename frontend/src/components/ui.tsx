@@ -15,29 +15,29 @@ const surfaces: Record<Surface, string> = {
   high: 'bg-surface-high',
 }
 
-/** The one rounded shape in the system. min-w-0: as a grid/flex item it may shrink below its widest line. */
+/** A panel with a hairline border. min-w-0: as a grid/flex item it may shrink below its widest line. */
 export function Card({ className, surface = 'low', ...props }: HTMLAttributes<HTMLDivElement> & { surface?: Surface }) {
   return <div className={cn('card min-w-0', surfaces[surface], className)} {...props} />
 }
 
 type Tone = 'neutral' | 'green' | 'red' | 'amber' | 'blue' | 'violet'
 const tones: Record<Tone, string> = {
-  neutral: 'bg-surface-highest text-ink-muted',
-  green: 'bg-secondary-container text-on-secondary-container',
-  red: 'bg-danger-container text-on-danger-container',
-  amber: 'bg-tertiary-container text-on-tertiary-container',
+  neutral: 'border border-line bg-surface-high text-ink-muted',
+  green: 'border border-secondary/40 bg-secondary-container text-on-secondary-container',
+  red: 'border border-danger/40 bg-danger-container text-on-danger-container',
+  amber: 'border border-tertiary/40 bg-tertiary-container text-on-tertiary-container',
   // Category tags stay quiet: colour is reserved for the two modes and for outcomes.
   blue: 'border border-line text-ink-muted',
   violet: 'border border-line text-ink-muted',
 }
 
-/** Rounded status pill (the palette's "OPTIMIZED" / "WEEKLY INSIGHT" shape). */
+/** Small square-cornered tag for status, level and category. */
 export function Badge({ tone = 'neutral', className, ...props }: HTMLAttributes<HTMLSpanElement> & { tone?: Tone }) {
   return (
     <span
       className={cn(
         // Long outcome messages may wrap on narrow screens instead of running past the card edge.
-        'inline-flex max-w-full items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold',
+        'inline-flex max-w-full items-center gap-1 rounded-[3px] px-1.5 py-px text-[12px] leading-[18px] font-medium',
         tones[tone],
         className,
       )}
@@ -49,7 +49,7 @@ export function Badge({ tone = 'neutral', className, ...props }: HTMLAttributes<
 type Variant = 'primary' | 'secondary' | 'inverted' | 'outlined' | 'ghost' | 'danger'
 const variants: Record<Variant, string> = {
   primary: 'bg-primary text-on-primary hover:bg-primary-hover',
-  secondary: 'bg-surface-highest text-ink hover:bg-surface-high',
+  secondary: 'border border-line bg-surface-high text-ink hover:bg-surface-highest',
   inverted: 'bg-inverse text-on-inverse hover:opacity-90',
   outlined: 'border border-line-strong text-ink hover:bg-surface-high',
   ghost: 'text-ink-muted hover:bg-surface-high hover:text-ink',
@@ -57,7 +57,7 @@ const variants: Record<Variant, string> = {
   danger: 'bg-tertiary-fill text-on-tertiary-fill hover:opacity-90',
 }
 
-/** Square buttons, as in the palette. Defaults to type="button" so it never submits a form by accident. */
+/** Compact buttons. Defaults to type="button" so it never submits a form by accident. */
 export function Button({
   variant = 'secondary',
   type = 'button',
@@ -71,63 +71,63 @@ export function Button({
     <button
       type={type}
       className={cn(
-        'inline-flex cursor-pointer items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold transition-[color,background-color,border-color,opacity,transform] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100',
+        'inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[3px] px-3 py-1.5 text-[13px] font-medium transition-[color,background-color,border-color,opacity] duration-150 disabled:cursor-not-allowed disabled:opacity-45',
         variants[variant],
         className,
       )}
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <Loader2 className="size-4 animate-spin" aria-hidden />}
+      {loading && <Loader2 className="size-3.5 animate-spin" aria-hidden />}
       {children}
     </button>
   )
 }
 
 /** Small square preset / payload button. */
-export const chipClass = 'cursor-pointer bg-surface-highest px-2.5 py-1.5 text-xs text-ink transition-colors hover:bg-surface-high'
+export const chipClass = 'cursor-pointer rounded-[3px] border border-line bg-surface-high px-2 py-1 font-mono text-xs text-ink transition-colors hover:bg-surface-highest'
 
 /** Shared look for text inputs, selects and textareas: square, on the lowest surface. No width or size. */
 export const fieldBase =
-  'border border-line bg-surface-lowest px-3 py-2.5 font-mono text-ink placeholder:text-ink-subtle transition-colors focus:border-line-strong'
+  'rounded-[3px] border border-line bg-surface-lowest px-2.5 py-1.5 font-mono text-ink placeholder:text-ink-subtle transition-colors focus:border-accent'
 export const fieldClass = `w-full text-sm ${fieldBase}`
 
 export function FieldLabel({ children }: { children: ReactNode }) {
-  return <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{children}</span>
+  return <span className="mb-1 block text-xs text-ink-subtle">{children}</span>
 }
 
-/** Small tracked label above a value (stat tiles, card kickers). */
+/** Small label above a value (stat tiles, panel kickers). */
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
-  return <p className={cn('text-[11px] font-semibold tracking-[0.12em] text-ink-subtle uppercase', className)}>{children}</p>
+  return <p className={cn('text-xs font-medium text-ink-subtle', className)}>{children}</p>
 }
 
 type TileTone = 'neutral' | 'green' | 'amber' | 'red' | 'primary'
 const tileTones: Record<TileTone, string> = {
-  neutral: 'bg-surface-highest text-ink-muted',
-  green: 'bg-secondary-container text-on-secondary-container',
-  amber: 'bg-tertiary-container text-on-tertiary-container',
-  red: 'bg-danger-container text-on-danger-container',
+  neutral: 'border border-line bg-surface-high text-ink-muted',
+  green: 'border border-secondary/35 bg-secondary-container text-on-secondary-container',
+  amber: 'border border-tertiary/35 bg-tertiary-container text-on-tertiary-container',
+  red: 'border border-danger/35 bg-danger-container text-on-danger-container',
   primary: 'bg-primary text-on-primary',
 }
 
-/** Square icon tile. */
+/** Small square icon tile. */
 export function IconTile({ icon: Icon, tone = 'neutral', size = 'md' }: { icon: LucideIcon; tone?: TileTone; size?: 'sm' | 'md' | 'lg' }) {
-  const box = size === 'sm' ? 'size-9' : size === 'lg' ? 'size-14' : 'size-11'
-  const glyph = size === 'sm' ? 'size-4' : size === 'lg' ? 'size-6' : 'size-5'
+  const box = size === 'sm' ? 'size-7' : size === 'lg' ? 'size-10' : 'size-8'
+  const glyph = size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5' : 'size-4'
   return (
-    <span className={cn('grid shrink-0 place-items-center', box, tileTones[tone])} aria-hidden>
+    <span className={cn('grid shrink-0 place-items-center rounded-[3px]', box, tileTones[tone])} aria-hidden>
       <Icon className={glyph} />
     </span>
   )
 }
 
-/** Flat, square-ended progress bar (the palette's thick bars). `value` is 0..1. */
+/** Thin flat progress bar. `value` is 0..1. */
 export function ProgressBar({ value, tone = 'primary', className, label }: { value: number; tone?: 'primary' | 'green' | 'amber'; className?: string; label?: string }) {
   const fill = tone === 'green' ? 'bg-secondary-fill' : tone === 'amber' ? 'bg-tertiary-fill' : 'bg-primary'
   const pct = Math.round(Math.max(0, Math.min(1, value)) * 100)
   return (
     <div
-      className={cn('h-2 w-full bg-surface-highest', className)}
+      className={cn('h-1.5 w-full rounded-[1px] bg-surface-highest', className)}
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={100}
@@ -141,11 +141,11 @@ export function ProgressBar({ value, tone = 'primary', className, label }: { val
 
 export function StatTile({ label, value, accent, testId }: { label: string; value: ReactNode; accent?: 'green' | 'amber'; testId?: string }) {
   return (
-    <div className="card flex flex-col justify-between gap-3 bg-surface-low p-5 sm:p-6">
+    <div className="card flex flex-col justify-between gap-1 bg-surface-low px-3 py-2.5">
       <Eyebrow>{label}</Eyebrow>
       <p
         className={cn(
-          'font-headline text-3xl font-semibold tracking-tight tabular-nums',
+          'font-mono text-xl font-medium tabular-nums',
           accent === 'green' ? 'text-secondary' : accent === 'amber' ? 'text-tertiary' : 'text-ink',
         )}
         data-testid={testId}
@@ -226,15 +226,15 @@ export function RadioPills<T extends string>({
 }) {
   return (
     <fieldset>
-      <legend className="mb-1.5 text-xs font-medium text-ink-subtle">{legend}</legend>
-      <div className="inline-flex bg-surface-highest p-1">
+      <legend className="mb-1 text-xs text-ink-subtle">{legend}</legend>
+      <div className="inline-flex rounded-[3px] border border-line bg-surface-high p-0.5">
         {options.map((option) => (
           <label
             key={option.value}
             data-testid={option.testId}
             className={cn(
-              'cursor-pointer px-4 py-1.5 text-sm font-semibold transition-colors duration-200',
-              'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-secondary-fill',
+              'cursor-pointer rounded-[2px] px-3 py-1 text-[13px] font-medium transition-colors duration-200',
+              'has-[:focus-visible]:outline-1 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent',
               value === option.value ? 'bg-primary text-on-primary' : 'text-ink-muted hover:text-ink',
             )}
           >
@@ -254,7 +254,7 @@ export function RadioPills<T extends string>({
   )
 }
 
-/** Square segmented tabs (code views and the like). The active one takes the primary fill. */
+/** Segmented tabs (code views and the like). The active one takes the primary fill. */
 export function Segmented<T extends string>({
   value,
   options,
@@ -267,7 +267,7 @@ export function Segmented<T extends string>({
   role?: 'tablist'
 }) {
   return (
-    <div className="inline-flex max-w-full overflow-x-auto bg-surface-highest p-1" role={role}>
+    <div className="inline-flex max-w-full overflow-x-auto rounded-[3px] border border-line bg-surface-high p-0.5" role={role}>
       {options.map((option) => (
         <button
           type="button"
@@ -276,7 +276,7 @@ export function Segmented<T extends string>({
           aria-selected={value === option.value}
           onClick={() => onChange(option.value)}
           className={cn(
-            'cursor-pointer px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors',
+            'cursor-pointer rounded-[2px] px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-colors',
             value === option.value ? 'bg-primary text-on-primary' : 'text-ink-muted hover:text-ink',
           )}
         >
@@ -290,7 +290,7 @@ export function Segmented<T extends string>({
 export function ErrorBox({ message, onRetry }: { message: string; onRetry?: () => void }) {
   const { t } = useI18n()
   return (
-    <div className="card flex items-center justify-between gap-3 bg-danger-container p-5 text-sm text-on-danger-container" role="alert">
+    <div className="card flex items-center justify-between gap-3 border-danger/40 bg-danger-container px-4 py-3 text-sm text-on-danger-container" role="alert">
       <span>{message}</span>
       {onRetry && (
         <Button variant="primary" onClick={onRetry}>
@@ -305,7 +305,7 @@ export function CodeBlock({ className, ...props }: HTMLAttributes<HTMLPreElement
   return (
     // biome-ignore lint/a11y/noNoninteractiveTabindex: long code scrolls; keyboard users need to focus it to scroll
     <pre tabIndex={0}
-      className={cn('overflow-x-auto border border-line bg-surface-lowest p-3.5 font-mono text-xs leading-relaxed text-ink', className)}
+      className={cn('overflow-x-auto rounded-[3px] border border-line bg-surface-lowest px-3 py-2.5 font-mono text-xs leading-relaxed text-ink', className)}
       {...props}
     />
   )

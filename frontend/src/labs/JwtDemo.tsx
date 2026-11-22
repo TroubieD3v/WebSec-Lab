@@ -88,8 +88,8 @@ export function JwtDemo({ mode, onActivity }: DemoProps) {
 
   const admin = result?.path === 'admin' && result.response.status === 200
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-4 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-4 p-4">
         <h3 className="text-sm font-semibold">{t('jwt.login')}</h3>
         <div className="flex gap-2">
           <input className={field} value={username} onChange={(e) => setUsername(e.target.value)} aria-label={t('auth.user')} data-testid="jwt-user" />
@@ -122,7 +122,7 @@ export function JwtDemo({ mode, onActivity }: DemoProps) {
         {error && <p className="text-xs text-danger">{error}</p>}
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         <label className="block">
           <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('jwt.token')}</span>
           <textarea className={field} rows={4} value={token} onChange={(e) => load(e.target.value.trim())} spellCheck={false} data-testid="jwt-token" />

@@ -84,8 +84,8 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
     : (response?.headers.filter(([k]) => /^(retry-after|content-type)/i.test(k)) ?? [])
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <p className="text-xs text-ink-muted">{t('pg.intro')}</p>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-ink-subtle">{t('pg.presets')}:</span>
@@ -111,7 +111,7 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
           </label>
           <label className="min-w-0 flex-1">
             <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('pg.path')}</span>
-            <div className="flex items-center border border-line bg-surface-lowest pl-3 font-mono text-sm transition-colors focus-within:border-line-strong focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-secondary-fill">
+            <div className="flex items-center border border-line bg-surface-lowest pl-3 font-mono text-sm transition-colors focus-within:border-line-strong focus-within:outline-1 focus-within:outline-offset-1 focus-within:outline-accent">
               <span className="truncate text-ink-subtle">
                 /api/labs/{labId}/{mode}/
               </span>
@@ -144,7 +144,7 @@ export function Playground({ labId, mode, presets, onActivity }: Props) {
         </div>
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         <h3 className="text-sm font-semibold">{t('pg.response')}</h3>
         {error && <p className="text-sm text-danger">{error}</p>}
         {!response && !error && <p className="text-sm text-ink-subtle">{t('pg.noResponse')}</p>}

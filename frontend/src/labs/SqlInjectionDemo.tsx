@@ -32,8 +32,8 @@ export function SqlInjectionDemo({ mode, onActivity }: DemoProps) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <form onSubmit={submit} className="space-y-3">
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('sqli.label')}</span>
@@ -59,7 +59,7 @@ export function SqlInjectionDemo({ mode, onActivity }: DemoProps) {
         </div>
       </Card>
 
-      <Card surface="lowest" className="p-6" aria-live="polite">
+      <Card surface="lowest" className="p-4" aria-live="polite">
         <h3 className="mb-3 text-sm font-semibold">{t('sqli.results', { n: result?.rows.length ?? 0 })}</h3>
         {result?.error && (
           <p className="mb-3 bg-danger-container p-3 font-mono text-xs text-on-danger-container" data-testid="sqli-error">

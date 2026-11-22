@@ -1,9 +1,10 @@
 // Regenerates docs/screenshots/*.png from a running stack:  node scripts/screenshots.mjs
 // Resets progress before and after, so run it against a stack whose progress you do not need.
+import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
 const base = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3000'
-const out = new URL('../../../docs/screenshots/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')
+const out = fileURLToPath(new URL('../../../docs/screenshots/', import.meta.url))
 
 const browser = await chromium.launch()
 const open = async (theme) => {
@@ -34,7 +35,7 @@ await dark.getByTestId('sqli-submit').click()
 await dark.getByTestId('sqli-results').waitFor()
 await dark.getByTestId('step-exploit').and(dark.locator('[data-done=true]')).waitFor()
 await dark.waitForTimeout(900)
-await dark.evaluate(() => window.scrollTo(0, 330))
+await dark.evaluate(() => window.scrollTo(0, 0))
 await dark.screenshot({ path: `${out}lab-sql-injection.png` })
 
 const light = await open('light')
