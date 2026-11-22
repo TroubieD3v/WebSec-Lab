@@ -73,8 +73,8 @@ export function RaceDemo({ mode, onActivity }: DemoProps) {
   const refused = statuses?.filter((s) => s === 409).length ?? 0
   const exploited = (wallet?.redemptions ?? 0) > 1
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <p className="text-sm text-ink-muted">{t('race.intro')}</p>
         <div className="flex flex-wrap gap-2">
           <Button variant="primary" onClick={once} disabled={busy} data-testid="race-once">
@@ -89,15 +89,15 @@ export function RaceDemo({ mode, onActivity }: DemoProps) {
         </div>
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         <div className="grid grid-cols-2 gap-3">
           <div>
             <p className="text-xs text-ink-subtle">{t('race.balance')}</p>
-            <p className="text-3xl font-semibold" data-testid="race-balance">{wallet?.balance ?? 0}</p>
+            <p className="text-xl font-semibold" data-testid="race-balance">{wallet?.balance ?? 0}</p>
           </div>
           <div>
             <p className="text-xs text-ink-subtle">{t('race.redemptions')}</p>
-            <p className="text-3xl font-semibold" data-testid="race-redemptions">{wallet?.redemptions ?? 0}</p>
+            <p className="text-xl font-semibold" data-testid="race-redemptions">{wallet?.redemptions ?? 0}</p>
           </div>
         </div>
         {statuses && (

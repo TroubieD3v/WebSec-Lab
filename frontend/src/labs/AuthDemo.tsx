@@ -103,8 +103,8 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
 
   const input = fieldClass
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <form onSubmit={onLogin} className="grid gap-3 sm:grid-cols-2">
           <label>
             <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('auth.user')}</span>
@@ -142,7 +142,7 @@ export function AuthDemo({ mode, onActivity }: DemoProps) {
         )}
       </Card>
 
-      <Card className="p-6">
+      <Card className="p-4">
         <h3 className="mb-2 text-sm font-semibold">{t('auth.log')}</h3>
         <CodeBlock className="max-h-80 space-y-1 overflow-y-auto" data-testid="auth-log">
           {log.length === 0 && ' '}

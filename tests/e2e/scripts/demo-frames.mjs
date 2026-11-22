@@ -1,10 +1,11 @@
 // Captures the frames of the README demo:  node scripts/demo-frames.mjs [baseUrl]
 // Then:  python scripts/make_gif.py  (stitches them into docs/screenshots/demo.gif)
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
 const base = process.argv[2] ?? 'http://127.0.0.1:3100'
-const dir = new URL('../test-results/demo-frames/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')
+const dir = fileURLToPath(new URL('../test-results/demo-frames/', import.meta.url))
 rmSync(dir, { recursive: true, force: true })
 mkdirSync(dir, { recursive: true })
 

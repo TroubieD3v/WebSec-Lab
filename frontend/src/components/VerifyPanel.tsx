@@ -20,7 +20,7 @@ function CheckTable({ mode, title, checks }: { mode: Mode; title: string; checks
     <Card surface="lowest" className="overflow-hidden">
       <div className="flex items-center gap-3 border-b border-line px-5 py-4">
         <IconTile icon={mode === 'fixed' ? ShieldCheck : ShieldAlert} tone={mode === 'fixed' ? 'green' : 'amber'} size="sm" />
-        <h3 className="font-bold">{title}</h3>
+        <h3 className="font-semibold">{title}</h3>
       </div>
       <ul className="divide-y divide-line">
         {checks.map((check, index) => (
@@ -78,8 +78,8 @@ export function VerifyPanel({ labId, onProgress }: Props) {
   const byMode = (mode: Mode) => result?.checks.filter((c) => c.mode === mode) ?? []
   const allPass = result?.vulnerability_confirmed && result.fix_confirmed
   return (
-    <div className="space-y-6">
-      <Card className="flex flex-wrap items-center justify-between gap-4 p-6">
+    <div className="space-y-4">
+      <Card className="flex flex-wrap items-center justify-between gap-4 p-4">
         <p className="max-w-xl text-sm leading-relaxed text-ink-muted">{t('verify.intro')}</p>
         <Button variant="primary" onClick={run} loading={running} data-testid="verify-run">
           {!running && <PlayCircle className="size-4" aria-hidden />} {running ? t('verify.running') : t('verify.run')}
@@ -89,7 +89,7 @@ export function VerifyPanel({ labId, onProgress }: Props) {
       {result && (
         <>
           <Card
-            className="glow relative space-y-6 overflow-hidden p-6 sm:p-8"
+            className=" relative space-y-4 overflow-hidden p-4 sm:p-4"
             style={{ ['--glow' as string]: allPass ? 'var(--secondary-fill)' : 'var(--danger-fill)' }}
             data-testid="verify-summary"
           >
@@ -99,7 +99,7 @@ export function VerifyPanel({ labId, onProgress }: Props) {
               ) : (
                 <Badge tone={allPass ? 'amber' : 'red'}>{allPass ? t('verify.badgePass') : t('verify.badgeFail')}</Badge>
               )}
-              <p className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+              <p className="font-headline text-xl font-semibold sm:text-lg">
                 <span className={allPass ? 'text-secondary' : 'text-danger'}>{t('verify.passed', { passed: result.passed, total: result.total })}</span>
               </p>
               {!result.completed && <p className="max-w-2xl text-sm text-ink-muted">{allPass ? t('verify.needSteps') : t('verify.failed')}</p>}
@@ -111,7 +111,7 @@ export function VerifyPanel({ labId, onProgress }: Props) {
               <Verdict ok={result.defended_by_you} pending label={t('verify.defended')} />
             </div>
           </Card>
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             <CheckTable mode="vulnerable" title={t('verify.modeVulnerable')} checks={byMode('vulnerable')} />
             <CheckTable mode="fixed" title={t('verify.modeFixed')} checks={byMode('fixed')} />
           </div>

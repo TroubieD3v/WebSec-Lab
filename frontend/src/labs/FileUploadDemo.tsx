@@ -68,8 +68,8 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
 
   const isImage = mode === 'fixed' && uploaded?.filename && /\.(png|jpe?g)$/.test(uploaded.filename)
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-4 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-4 p-4">
         <div>
           <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('upload.samples')}</span>
           <div className="flex flex-wrap gap-2">
@@ -116,7 +116,7 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
 
       <div className="space-y-4">
         {uploaded && (
-          <Card surface="lowest" className="space-y-3 p-6" aria-live="polite">
+          <Card surface="lowest" className="space-y-3 p-4" aria-live="polite">
             <div className="flex flex-wrap items-center gap-2">
               <StatusChip status={uploaded.status} data-testid="upload-status" />
               {uploaded.filename && <Badge data-testid="upload-saved-as">{t('upload.savedAs', { name: uploaded.filename })}</Badge>}
@@ -126,7 +126,7 @@ export function FileUploadDemo({ mode, onActivity }: DemoProps) {
           </Card>
         )}
         {isImage ? (
-          <Card className="p-6">
+          <Card className="p-4">
             <img src={previewSrc ?? ''} alt="" className="max-h-40 border border-line bg-white" data-testid="upload-image" />
           </Card>
         ) : (

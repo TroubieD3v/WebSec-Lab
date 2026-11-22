@@ -39,8 +39,8 @@ export function PathTraversalDemo({ mode, onActivity }: DemoProps) {
   const data = last ? ((tryJson(last.body) ?? {}) as FileResult) : undefined
   const escaped = last?.status === 200 && data?.resolved && !data.resolved.startsWith(`${DOCS_ROOT}/`)
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <form onSubmit={submit} className="space-y-3">
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-ink-subtle">{t('path.file')}</span>
@@ -78,7 +78,7 @@ export function PathTraversalDemo({ mode, onActivity }: DemoProps) {
         <p className="text-xs text-ink-subtle">{t('path.sim')}</p>
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         {last && (
           <>
             <div className="flex flex-wrap items-center gap-2">

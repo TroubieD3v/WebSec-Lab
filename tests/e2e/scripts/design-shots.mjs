@@ -1,8 +1,9 @@
 // Design review screenshots (not committed):  node scripts/design-shots.mjs [baseUrl]
+import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
 const base = process.argv[2] ?? 'http://127.0.0.1:3100'
-const out = new URL('../test-results/design/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')
+const out = fileURLToPath(new URL('../test-results/design/', import.meta.url))
 
 const browser = await chromium.launch()
 for (const [name, viewport] of [

@@ -53,11 +53,11 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
 
   return (
     <section className="space-y-5" aria-label={t('lab.progress')}>
-      <ol className="grid gap-4 sm:grid-cols-4 sm:gap-3">
+      <ol className="grid gap-2.5 sm:grid-cols-4 sm:gap-3">
         {steps.map((step, index) => (
-          <li key={step.id} data-testid={`step-${step.id}`} data-done={step.done} className="flex gap-3 sm:flex-col sm:gap-3">
+          <li key={step.id} data-testid={`step-${step.id}`} data-done={step.done} className="flex gap-3 sm:flex-col sm:gap-2">
             {/* The palette's thick bar: filled in the step's colour once the server confirms it. */}
-            <span aria-hidden className="hidden h-2 bg-surface-highest sm:block">
+            <span aria-hidden className="hidden h-1 rounded-[1px] bg-surface-highest sm:block">
               <span
                 className={cn(
                   'block h-full origin-left transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]',
@@ -70,20 +70,20 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
               <span
                 style={{ ['--step-color' as string]: TONE[step.id].color }}
                 className={cn(
-                  'grid size-6 shrink-0 place-items-center text-[11px] font-bold transition-colors duration-500',
+                  'grid size-5 shrink-0 place-items-center rounded-[3px] font-mono text-[11px] font-medium transition-colors duration-500',
                   step.done
                     ? cn(TONE[step.id].fill, TONE[step.id].text)
                     : step.id === next
-                      ? 'border-2 border-line-strong text-ink'
+                      ? 'border border-accent text-ink'
                       : 'bg-surface-highest text-ink-subtle',
                   justDone.has(step.id) && 'step-confirmed',
                 )}
               >
-                {step.done ? <Check className="size-3.5" strokeWidth={3} aria-hidden /> : index + 1}
+                {step.done ? <Check className="size-3" strokeWidth={3} aria-hidden /> : index + 1}
               </span>
               <span
                 className={cn(
-                  'text-sm leading-snug transition-colors duration-500',
+                  'text-[13px] leading-snug transition-colors duration-500',
                   step.done ? 'font-medium text-ink' : step.id === next ? 'text-ink' : 'text-ink-subtle',
                 )}
               >
@@ -93,7 +93,7 @@ export function LabProgressTracker({ progress }: { progress: LabProgress }) {
           </li>
         ))}
       </ol>
-      <p className="max-w-2xl text-sm text-ink-muted" data-testid="lab-message" aria-live="polite">
+      <p className="max-w-2xl text-[13px] text-ink-muted" data-testid="lab-message" aria-live="polite">
         {message}
       </p>
     </section>

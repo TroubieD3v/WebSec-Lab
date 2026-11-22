@@ -2,6 +2,22 @@
 
 All notable changes are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Interface redesign. The dashboard is a lab catalogue: one panel per OWASP category with a row per lab (level,
+  step progress, status), a progress strip for the three steps across all labs, and a side column with the next lab
+  and totals. A lab opens as a workspace: breadcrumb, task and progress next to the mode switch, and the Try it /
+  Playground / Code Diff / Hints / Verification / Learn views as editor tabs; the code diff shows the file name and
+  line gutters. Graphite dark theme and a soft light theme, IBM Plex Sans and Mono bundled with the app, compact
+  panels with 3-4 px radii. The screen no longer takes a colour tint per mode; the mode is shown in the header,
+  the mode panel and the tab bar.
+- README screenshots and the demo GIF show the new design.
+
+### Fixed
+- The screenshot and demo scripts wrote to a wrong folder when the checkout path contained a space (the file URL
+  was not decoded).
+
 ## [1.3.0]
 
 ### Changed

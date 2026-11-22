@@ -39,10 +39,10 @@ export function HintsPanel({ labId, count, revealed, onChange }: Props) {
       {Array.from({ length: count }, (_, i) => i + 1).map((level) => {
         const text = revealed[level]
         return (
-          <Card key={level} className="flex gap-4 p-5" data-testid={`hint-${level}`}>
+          <Card key={level} className="flex gap-4 p-4" data-testid={`hint-${level}`}>
             <IconTile icon={text ? Lightbulb : Lock} tone={text ? 'amber' : 'neutral'} />
             <div className="min-w-0 flex-1 space-y-2">
-            <p className="font-headline font-bold">{t('hints.title', { n: level })}</p>
+            <p className="font-headline font-semibold">{t('hints.title', { n: level })}</p>
             {text ? (
               <p className="text-sm leading-relaxed text-ink-muted">
                 <Inline text={text} />

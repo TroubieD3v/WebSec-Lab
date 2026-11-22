@@ -47,8 +47,8 @@ export function AccessControlDemo({ mode, onActivity }: DemoProps) {
   const denied = status === 403 || status === 400
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <Card className="space-y-5 p-6">
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card className="space-y-5 p-4">
         <div>
           <RadioPills
             name="bac-persona"
@@ -80,7 +80,7 @@ export function AccessControlDemo({ mode, onActivity }: DemoProps) {
         <p className="text-xs text-ink-subtle">{t('bac.hint')}</p>
       </Card>
 
-      <Card surface="lowest" className="space-y-4 p-6" aria-live="polite">
+      <Card surface="lowest" className="space-y-4 p-4" aria-live="polite">
         {result && (
           <>
             <div className="flex flex-wrap items-center gap-2">

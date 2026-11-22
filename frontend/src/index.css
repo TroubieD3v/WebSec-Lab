@@ -1,23 +1,25 @@
 @import "tailwindcss";
-@import "@fontsource-variable/manrope";
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 
 /*
- * WebSec Lab design tokens.
+ * WebSec Lab design tokens: a neutral graphite palette.
  *
- * Palette: Primary #121212 (neutral ink, inverted in the dark theme), Secondary #008542 (fixed /
- * protected / success), Tertiary #D97706 (vulnerable / attack in progress), Neutral #64748B (surfaces
- * and text), plus the palette's red for errors and successful exploits. Each role has a tone for text,
- * a solid fill with its own text colour, and a soft container.
+ * Chrome stays grey; colour is reserved for meaning. Secondary (green) is fixed / protected / passed,
+ * tertiary (amber) is vulnerable / attack in progress, danger (red) is errors and successful exploits,
+ * primary (steel blue) is the main action and the selected item. Each role has a tone for text, a solid
+ * fill with its own text colour, and a soft container.
  *
  * Dark is the default theme; `html.light` switches every token. Components only use these roles,
  * never raw colours, so both themes stay in step.
  */
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
-  --font-headline: "Manrope Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono Variable", ui-monospace, Consolas, monospace;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-headline: "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
 
   --color-canvas: var(--canvas);
   --color-surface-lowest: var(--surface-lowest);
@@ -30,6 +32,9 @@
   --color-ink-subtle: var(--ink-subtle);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-chrome: var(--chrome);
+  --color-sel: var(--sel);
+  --color-accent: var(--accent);
 
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
@@ -56,128 +61,106 @@
   --color-danger-container: var(--danger-container);
   --color-on-danger-container: var(--on-danger-container);
 
-  --radius-card: 1.5rem;
+  --radius-card: 4px;
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Dark (default): deep neutral-navy surfaces, light ink, light primary. */
+/* Dark (default): graphite surfaces, light grey ink. */
 :root {
   color-scheme: dark;
-  --canvas: #0b1220;
-  --surface-lowest: #070c16;
-  --surface-low: #111a2a;
-  --surface: #162134;
-  --surface-high: #1c293e;
-  --surface-highest: #243249;
-  --ink: #e8eefb;
-  --ink-muted: #b9c7e1;
-  --ink-subtle: #95a2bb; /* darkest grey allowed for text: >= 4.5:1 on every surface */
-  --line: #2a3850;
-  --line-strong: #56647c;
+  --canvas: #191b1e;
+  --chrome: #141619;
+  --surface-lowest: #16181b;
+  --surface-low: #1f2226;
+  --surface: #24272c;
+  --surface-high: #2a2d32;
+  --surface-highest: #2f3338;
+  --sel: #293441;
+  --ink: #d5d7da;
+  --ink-muted: #b4b9be;
+  --ink-subtle: #9aa0a6; /* darkest grey allowed for text: >= 4.5:1 on every surface */
+  --line: #2f333a;
+  --line-strong: #4a5058;
+  --accent: #8fb4d8;
 
-  --primary: #f1f1f1;
-  --primary-hover: #ffffff;
-  --on-primary: #121212;
-  --inverse: #d5e3fd;
-  --on-inverse: #0f1c2f;
-  --on-inverse-muted: #3a475d;
+  --primary: #3e6489;
+  --primary-hover: #47709a;
+  --on-primary: #ffffff;
+  --inverse: #d5d7da;
+  --on-inverse: #191b1e;
+  --on-inverse-muted: #3f454c;
 
-  --secondary: #6fda8d;
-  --secondary-fill: #4fbe74;
-  --on-secondary-fill: #00210c;
-  --secondary-container: #0d3a21;
-  --on-secondary-container: #a6f5b8;
+  --secondary: #a3bf9d;
+  --secondary-fill: #94b08e;
+  --on-secondary-fill: #142012;
+  --secondary-container: #232c22;
+  --on-secondary-container: #c6d9c1;
 
-  --tertiary: #ffb780;
-  --tertiary-fill: #ff9233;
-  --on-tertiary-fill: #2e1500;
-  --tertiary-container: #4a2600;
-  --on-tertiary-container: #ffdcc4;
+  --tertiary: #d6b071;
+  --tertiary-fill: #d0a866;
+  --on-tertiary-fill: #261a06;
+  --tertiary-container: #332a1c;
+  --on-tertiary-container: #ead6b0;
 
-  --danger: #ffb4ab;
-  --danger-fill: #ff8a80;
-  --on-danger-fill: #410002;
-  --danger-container: #5c0a0a;
-  --on-danger-container: #ffdad6;
+  --danger: #e09587;
+  --danger-fill: #d98577;
+  --on-danger-fill: #2a0f0a;
+  --danger-container: #3a2522;
+  --on-danger-container: #f1c9c1;
 
   --card-shadow: none;
-  --aura-vulnerable: 0;
-  --aura-fixed: 0;
 }
 
-/* Light: the palette's periwinkle surfaces, navy ink, black primary. */
+/* Light: pale grey surfaces, near-black ink. */
 html.light {
   color-scheme: light;
-  --canvas: #f8f9ff;
+  --canvas: #eef0f2;
+  --chrome: #e2e5e8;
   --surface-lowest: #ffffff;
-  --surface-low: #eff4ff;
-  --surface: #e5eeff;
-  --surface-high: #dce9ff;
-  --surface-highest: #d3e2fd;
-  --ink: #0b1c30;
-  --ink-muted: #3a475d;
-  --ink-subtle: #526077;
-  --line: #c4d2ea;
-  --line-strong: #8491aa;
+  --surface-low: #f8f9fa;
+  --surface: #f1f3f5;
+  --surface-high: #e8ebee;
+  --surface-highest: #e2e5e8;
+  --sel: #d8e3ee;
+  --ink: #1e2227;
+  --ink-muted: #3f454c;
+  --ink-subtle: #5b626a;
+  --line: #cdd3d9;
+  --line-strong: #9aa2ab;
+  --accent: #2c5d8a;
 
-  --primary: #121212;
-  --primary-hover: #303030;
+  --primary: #3a6693;
+  --primary-hover: #2f5680;
   --on-primary: #ffffff;
-  --inverse: #1f2f45;
-  --on-inverse: #eaf1ff;
-  --on-inverse-muted: #b9c7e1;
+  --inverse: #1f2328;
+  --on-inverse: #eef0f2;
+  --on-inverse-muted: #b6bcc2;
 
-  --secondary: #006d33;
-  --secondary-fill: #008542;
+  --secondary: #3b6a4a;
+  --secondary-fill: #3b6a4a;
   --on-secondary-fill: #ffffff;
-  --secondary-container: #c6f6d1;
-  --on-secondary-container: #00391a;
+  --secondary-container: #dfeae1;
+  --on-secondary-container: #1f3d29;
 
-  --tertiary: #8e4e00;
-  --tertiary-fill: #d97706;
-  --on-tertiary-fill: #1b0c00;
-  --tertiary-container: #ffdcc4;
-  --on-tertiary-container: #4c2700;
+  --tertiary: #75520f;
+  --tertiary-fill: #c99a52;
+  --on-tertiary-fill: #2a1c05;
+  --tertiary-container: #f3e7cf;
+  --on-tertiary-container: #4a3410;
 
-  --danger: #ba1a1a;
-  --danger-fill: #c41e1e;
+  --danger: #a8402f;
+  --danger-fill: #a8402f;
   --on-danger-fill: #ffffff;
-  --danger-container: #ffdad6;
-  --on-danger-container: #690005;
+  --danger-container: #f6dfda;
+  --on-danger-container: #5c1f15;
 
-  --card-shadow: 0 1px 2px rgb(11 28 48 / 0.04), 0 14px 30px -20px rgb(11 28 48 / 0.18);
-}
-
-/* The lab page sets data-mode on <html>; the aura is the "temperature" of the whole screen. */
-html[data-mode="vulnerable"] {
-  --aura-vulnerable: 1;
-}
-html[data-mode="fixed"] {
-  --aura-fixed: 1;
+  --card-shadow: none;
 }
 
 body {
   @apply bg-canvas font-sans text-ink antialiased;
-  font-optical-sizing: auto;
-  transition: background-color 300ms ease;
-}
-
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  transition: opacity 900ms var(--ease-out-quint);
-}
-body::before {
-  background: radial-gradient(60rem 32rem at 85% -10%, color-mix(in oklab, var(--tertiary-fill) 16%, transparent), transparent 70%);
-  opacity: var(--aura-vulnerable);
-}
-body::after {
-  background: radial-gradient(60rem 32rem at 85% -10%, color-mix(in oklab, var(--secondary-fill) 16%, transparent), transparent 70%);
-  opacity: var(--aura-fixed);
+  font-size: 14px;
+  font-feature-settings: "tnum";
 }
 
 h1,
@@ -188,16 +171,16 @@ h4 {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--secondary-fill) 35%, transparent);
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
 }
 
 code.inline {
-  @apply bg-surface-highest px-1.5 py-0.5 font-mono text-[0.84em] text-ink;
+  @apply rounded-[2px] bg-surface-highest px-1 py-px font-mono text-[0.86em] text-ink;
 }
 
 :focus-visible {
-  outline: 2px solid var(--secondary-fill);
-  outline-offset: 2px;
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
 }
 
 * {
@@ -212,25 +195,29 @@ textarea {
   font-variant-ligatures: none;
 }
 
-/* Cards: the one rounded shape. Controls stay square, as in the palette. */
+/* Panels: hairline border, small radius, no shadow. */
 .card {
   border-radius: var(--radius-card);
+  border: 1px solid var(--line);
   box-shadow: var(--card-shadow);
 }
 
-/* Soft colour bloom in a card corner (EcoSync-style), tinted by the role passed in --glow. */
+/* Panel header bar. */
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Kept as a no-op so older markup that still carries it renders flat. */
 .glow::before {
-  content: "";
-  position: absolute;
-  top: -5rem;
-  right: -5rem;
-  width: 16rem;
-  height: 16rem;
-  border-radius: 9999px;
-  background: color-mix(in oklab, var(--glow, var(--secondary-fill)) 22%, transparent);
-  filter: blur(48px);
-  pointer-events: none;
-  transition: opacity 700ms var(--ease-out-quint);
+  content: none;
 }
 
 /* --- motion ------------------------------------------------------------------------------
@@ -263,17 +250,14 @@ textarea {
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, transparent, var(--sweep-color), transparent);
-  animation: seal-sweep 900ms var(--ease-out-quint) both;
+  animation: seal-sweep 600ms var(--ease-out-quint) both;
 }
 
 /* A progress step that the server just confirmed. */
 @keyframes step-confirm {
   0% {
-    transform: scale(0.6);
+    transform: scale(0.85);
     box-shadow: 0 0 0 0 var(--step-color);
-  }
-  55% {
-    transform: scale(1.15);
   }
   100% {
     transform: scale(1);
